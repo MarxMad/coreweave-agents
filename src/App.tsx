@@ -5,8 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Layout } from "@/components/layout";
-import Dashboard from "./pages/Dashboard";
-import CreateAgent from "./pages/CreateAgent";
+import TokenDashboard from "./pages/TokenDashboard";
+import TokenLaunchWizard from "./pages/TokenLaunchWizard";
 import Monitor from "./pages/Monitor";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
@@ -22,8 +22,8 @@ const App = () => (
         <BrowserRouter>
           <Layout>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/create" element={<CreateAgent />} />
+              <Route path="/" element={<TokenDashboard />} />
+              <Route path="/launch" element={<TokenLaunchWizard />} />
               <Route path="/monitor" element={<Monitor />} />
               <Route path="/analytics" element={<Analytics />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

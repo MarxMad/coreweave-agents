@@ -20,8 +20,8 @@ export function Layout({ children }: LayoutProps) {
             <div className="flex items-center gap-3">
               <SidebarTrigger className="h-8 w-8" />
               <div className="hidden sm:block">
-                <h2 className="text-lg font-semibold text-foreground">CoreDao AI Agent Launcher</h2>
-                <p className="text-sm text-muted-foreground">Gestiona tus agentes autónomos</p>
+                <h2 className="text-lg font-semibold text-foreground">CoreDao AI Launchpad</h2>
+                <p className="text-sm text-muted-foreground">Lanza tokens con agentes AI inteligentes</p>
               </div>
             </div>
             

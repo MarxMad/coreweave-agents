@@ -1,13 +1,15 @@
 import { useState } from "react"
 import { 
-  Bot, 
+  Rocket, 
   LayoutDashboard, 
   Plus, 
   Activity, 
   BarChart3, 
   Settings,
   Zap,
-  Wallet
+  Target,
+  TrendingUp,
+  Users
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -26,13 +28,14 @@ import {
 
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Nuevo Agente", url: "/create", icon: Plus },
-  { title: "Monitoreo", url: "/monitor", icon: Activity },
+  { title: "Lanzar Token", url: "/launch", icon: Rocket },
+  { title: "Mis Lanzamientos", url: "/my-tokens", icon: Target },
+  { title: "Monitoreo AI", url: "/monitor", icon: Activity },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ]
 
-const settingsItems = [
-  { title: "Wallet CoreDao", url: "/wallet", icon: Wallet },
+const toolsItems = [
+  { title: "Estrategias AI", url: "/strategies", icon: Users },
   { title: "Configuración", url: "/settings", icon: Settings },
 ]
 
@@ -64,12 +67,12 @@ export function AppSidebar() {
         <div className="px-6 pb-4">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Bot className="h-4 w-4 text-primary-foreground" />
+              <Rocket className="h-4 w-4 text-primary-foreground" />
             </div>
             {!collapsed && (
               <div className="flex flex-col">
                 <span className="text-sm font-semibold">CoreDao AI</span>
-                <span className="text-xs text-muted-foreground">Agent Launcher</span>
+                <span className="text-xs text-muted-foreground">Token Launchpad</span>
               </div>
             )}
           </div>
@@ -94,12 +97,12 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Settings */}
+        {/* Tools */}
         <SidebarGroup>
-          <SidebarGroupLabel>Configuración</SidebarGroupLabel>
+          <SidebarGroupLabel>Herramientas</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {settingsItems.map((item) => (
+              {toolsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} className={getNavCls}>
@@ -116,10 +119,10 @@ export function AppSidebar() {
         {/* Quick Action */}
         {!collapsed && (
           <div className="mt-auto p-4">
-            <NavLink to="/create">
+            <NavLink to="/launch">
               <div className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-primary-foreground transition-colors hover:bg-primary-hover">
-                <Zap className="h-4 w-4" />
-                <span className="text-sm font-medium">Lanzar Agente</span>
+                <Rocket className="h-4 w-4" />
+                <span className="text-sm font-medium">Lanzar Token</span>
               </div>
             </NavLink>
           </div>
