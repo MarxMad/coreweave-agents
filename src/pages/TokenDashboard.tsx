@@ -28,7 +28,7 @@ const mockTokens: TokenLaunch[] = [
     holders: 5420,
     aiAgents: 3,
     socialScore: 85,
-    launchDate: "Hace 2 días",
+    launchDate: "2 days ago",
     creator: "0x1234...abcd"
   },
   {
@@ -42,7 +42,7 @@ const mockTokens: TokenLaunch[] = [
     holders: 1230,
     aiAgents: 2,
     socialScore: 72,
-    launchDate: "Hace 6 horas",
+    launchDate: "6 hours ago",
     creator: "0x5678...efgh"
   },
   {
@@ -56,7 +56,7 @@ const mockTokens: TokenLaunch[] = [
     holders: 890,
     aiAgents: 1,
     socialScore: 58,
-    launchDate: "Ayer",
+    launchDate: "Yesterday",
     creator: "0x9012...ijkl"
   },
   {
@@ -70,7 +70,7 @@ const mockTokens: TokenLaunch[] = [
     holders: 12340,
     aiAgents: 5,
     socialScore: 92,
-    launchDate: "Hace 1 semana",
+    launchDate: "1 week ago",
     creator: "0x3456...mnop"
   }
 ]
@@ -116,16 +116,23 @@ export default function TokenDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Token Launchpad</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <img 
+              src="/CorewL.png" 
+              alt="CoreWeave Logo" 
+              className="h-10 w-10 object-contain"
+            />
+            <h1 className="text-3xl font-bold text-foreground">Token Launchpad</h1>
+          </div>
           <p className="text-muted-foreground">
-            Lanza y gestiona tokens con agentes AI inteligentes
+            Launch and manage tokens with intelligent AI agents
           </p>
         </div>
         
         <Link to="/launch">
           <Button size="lg" className="gap-2">
-            <Rocket className="h-5 w-5" />
-            Lanzar Nuevo Token
+            <Plus className="h-5 w-5" />
+            Launch New Token
           </Button>
         </Link>
       </div>
@@ -134,45 +141,45 @@ export default function TokenDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tokens en Vivo</CardTitle>
+            <CardTitle className="text-sm font-medium">Live Tokens</CardTitle>
             <TrendingUp className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-success">{liveTokens}</div>
-            <p className="text-xs text-muted-foreground">activos ahora</p>
+            <p className="text-xs text-muted-foreground">active now</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Lanzamientos</CardTitle>
+            <CardTitle className="text-sm font-medium">Launches</CardTitle>
             <Rocket className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">{launchingTokens}</div>
-            <p className="text-xs text-muted-foreground">en progreso</p>
+            <p className="text-xs text-muted-foreground">in progress</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Market Cap Total</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Market Cap</CardTitle>
             <TrendingUp className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${totalMarketCap.toFixed(1)}M</div>
-            <p className="text-xs text-muted-foreground">valor total</p>
+            <p className="text-xs text-muted-foreground">total value</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Holders Totales</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Holders</CardTitle>
             <Users className="h-4 w-4 text-accent-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalHolders.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">inversores únicos</p>
+            <p className="text-xs text-muted-foreground">unique investors</p>
           </CardContent>
         </Card>
       </div>
@@ -182,18 +189,18 @@ export default function TokenDashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bot className="h-5 w-5 text-primary" />
-            Lanzamiento AI Rápido
+            Quick AI Launch
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
-            Crea tu token en minutos con agentes AI preconfigurados para marketing, comunidad y engagement automático.
+            Create your token in minutes with pre-configured AI agents for marketing, community, and automatic engagement.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link to="/launch">
               <Button className="gap-2">
                 <Rocket className="h-4 w-4" />
-                Wizard de Lanzamiento
+                Launch Wizard
               </Button>
             </Link>
             <Link to="/strategies">
@@ -211,7 +218,7 @@ export default function TokenDashboard() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar tokens por nombre o símbolo..."
+            placeholder="Search tokens by name or symbol..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -220,14 +227,14 @@ export default function TokenDashboard() {
         
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Filtrar por estado" />
+            <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos los estados</SelectItem>
-            <SelectItem value="launching">Lanzando</SelectItem>
-            <SelectItem value="live">En Vivo</SelectItem>
-            <SelectItem value="paused">Pausado</SelectItem>
-            <SelectItem value="completed">Completado</SelectItem>
+            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="launching">Launching</SelectItem>
+            <SelectItem value="live">Live</SelectItem>
+            <SelectItem value="paused">Paused</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -235,24 +242,24 @@ export default function TokenDashboard() {
       {/* Tokens Tabs */}
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">Todos ({tokens.length})</TabsTrigger>
+          <TabsTrigger value="all">All ({tokens.length})</TabsTrigger>
           <TabsTrigger value="trending">Trending</TabsTrigger>
-          <TabsTrigger value="recent">Recientes</TabsTrigger>
-          <TabsTrigger value="my-tokens">Mis Tokens</TabsTrigger>
+          <TabsTrigger value="recent">Recent</TabsTrigger>
+          <TabsTrigger value="my-tokens">My Tokens</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="mt-6">
           {filteredTokens.length === 0 ? (
             <Card className="p-12 text-center">
               <Rocket className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">No hay tokens disponibles</h3>
+              <h3 className="text-lg font-semibold mb-2">No tokens available</h3>
               <p className="text-muted-foreground mb-4">
-                Sé el primero en lanzar un token con agentes AI en CoreDao
+                Be the first to launch a token with AI agents on CoreDao
               </p>
               <Link to="/launch">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
-                  Lanzar Primer Token
+                  Launch First Token
                 </Button>
               </Link>
             </Card>

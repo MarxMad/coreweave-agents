@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle } from "lucide-react"
+import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle, AlertTriangle, Share2 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,67 +11,73 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { useWallet } from "@/hooks/use-wallet"
+import { switchChain } from '@wagmi/core'
+import { config } from '@/lib/wagmi'
+import SocialMediaIntegration from "@/components/social-media-integration"
 
 const steps = [
-  { id: 1, title: "Configuración del Token", icon: Rocket },
-  { id: 2, title: "Agentes AI", icon: Bot },
-  { id: 3, title: "Estrategias Marketing", icon: Target },
-  { id: 4, title: "Confirmación", icon: CheckCircle },
+  { id: 1, title: "Token Configuration", icon: Rocket },
+  { id: 2, title: "Social Media", icon: Share2 },
+  { id: 3, title: "AI Agents", icon: Bot },
+  { id: 4, title: "Marketing Strategies", icon: Target },
+  { id: 5, title: "Confirmation", icon: CheckCircle },
 ]
 
 const aiAgentTemplates = [
   {
     id: "community",
     name: "Community Manager",
-    description: "Gestión de comunidad y engagement automático",
+    description: "Community management and automatic engagement",
     channels: ["Discord", "Telegram"],
-    features: ["Respuestas automáticas", "Moderación", "Eventos"]
+    features: ["Automatic responses", "Moderation", "Events"]
   },
   {
     id: "marketing",
     name: "Marketing AI",
-    description: "Campañas y promoción automatizada",
+    description: "Automated campaigns and promotion",
     channels: ["Twitter", "Reddit"],
-    features: ["Posts programados", "Influencer outreach", "Tendencias"]
+    features: ["Scheduled posts", "Influencer outreach", "Trends"]
   },
   {
     id: "analytics",
     name: "Data Analyst",
-    description: "Análisis de mercado y métricas",
+    description: "Market analysis and metrics",
     channels: ["Dashboard"],
-    features: ["Reportes automáticos", "Alertas", "Predicciones"]
+    features: ["Automatic reports", "Alerts", "Predictions"]
   },
   {
     id: "trader",
     name: "Trading Assistant",
-    description: "Soporte para trading y liquidez",
+    description: "Trading and liquidity support",
     channels: ["DEX"],
-    features: ["Market making", "Arbitraje", "Alertas de precio"]
+    features: ["Market making", "Arbitrage", "Price alerts"]
   }
 ]
 
 const marketingStrategies = [
   {
     id: "viral",
-    name: "Estrategia Viral",
-    description: "Enfoque en contenido viral y tendencias",
+    name: "Viral Strategy",
+    description: "Focus on viral content and trends",
     tactics: ["Memes", "Challenges", "Influencers"]
   },
   {
     id: "utility",
-    name: "Enfoque Utilidad",
-    description: "Destacar casos de uso y funcionalidad",
-    tactics: ["Demos", "Tutoriales", "Partnerships"]
+    name: "Utility Focus",
+    description: "Highlight use cases and functionality",
+    tactics: ["Demos", "Tutorials", "Partnerships"]
   },
   {
     id: "community",
     name: "Community First",
-    description: "Construcción de comunidad sólida",
-    tactics: ["AMAs", "Concursos", "Recompensas"]
+    description: "Building a solid community",
+    tactics: ["AMAs", "Contests", "Rewards"]
   }
 ]
 
 export default function TokenLaunchWizard() {
+  const { isConnected, isCoreDaoChain, chainId } = useWallet()
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     // Step 1: Token Config
@@ -82,12 +88,15 @@ export default function TokenLaunchWizard() {
     initialPrice: "",
     liquidityPercent: "50",
     
-    // Step 2: AI Agents
+    // Step 2: Social Media
+    connectedAccounts: [] as any[],
+    
+    // Step 3: AI Agents
     selectedAgents: [] as string[],
     agentBudget: "100",
     autoMode: true,
     
-    // Step 3: Marketing
+    // Step 4: Marketing
     strategy: "",
     channels: [] as string[],
     budget: "500",
@@ -140,11 +149,34 @@ export default function TokenLaunchWizard() {
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-foreground">Lanzar Nuevo Token</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <img 
+              src="/CorewL.png" 
+              alt="CoreWeave Logo" 
+              className="h-10 w-10 object-contain"
+            />
+            <h1 className="text-3xl font-bold text-foreground">Launch New Token</h1>
+          </div>
           <p className="text-muted-foreground">
-            Configura tu token con agentes AI inteligentes
+            Configure your token with intelligent AI agents
           </p>
         </div>
+        {isConnected && !isCoreDaoChain && (
+          <Button 
+            variant="destructive" 
+            onClick={async () => {
+              try {
+                await switchChain(config, { chainId: 1116 })
+              } catch (error) {
+                console.error('Error switching to CoreDAO:', error)
+              }
+            }}
+            className="flex items-center gap-2"
+          >
+            <AlertTriangle className="h-4 w-4" />
+            Switch to Core Network
+          </Button>
+        )}
       </div>
 
       {/* Progress */}
@@ -152,8 +184,8 @@ export default function TokenLaunchWizard() {
         <CardContent className="pt-6">
           <div className="space-y-4">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Progreso del Wizard</span>
-              <span className="font-medium">Paso {currentStep} de {steps.length}</span>
+              <span className="text-muted-foreground">Wizard Progress</span>
+              <span className="font-medium">Step {currentStep} of {steps.length}</span>
             </div>
             <Progress value={progress} className="h-2" />
             
@@ -191,26 +223,26 @@ export default function TokenLaunchWizard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Rocket className="h-5 w-5" />
-              Configuración del Token
+              Token Configuration
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre del Token</Label>
+                <Label htmlFor="name">Token Name</Label>
                 <Input
                   id="name"
-                  placeholder="ej. MemeAI Coin"
+                  placeholder="e.g. MemeAI Coin"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="symbol">Símbolo</Label>
+                <Label htmlFor="symbol">Symbol</Label>
                 <Input
                   id="symbol"
-                  placeholder="ej. MEMEAI"
+                  placeholder="e.g. MEMEAI"
                   value={formData.symbol}
                   onChange={(e) => setFormData(prev => ({ ...prev, symbol: e.target.value }))}
                 />
@@ -218,10 +250,10 @@ export default function TokenLaunchWizard() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Descripción</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
-                placeholder="Describe tu token y su propósito..."
+                placeholder="Describe your token and its purpose..."
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               />
@@ -229,7 +261,7 @@ export default function TokenLaunchWizard() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="supply">Supply Total</Label>
+                <Label htmlFor="supply">Total Supply</Label>
                 <Input
                   id="supply"
                   placeholder="1000000"
@@ -239,7 +271,7 @@ export default function TokenLaunchWizard() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="price">Precio Inicial (CORE)</Label>
+                <Label htmlFor="price">Initial Price (CORE)</Label>
                 <Input
                   id="price"
                   placeholder="0.001"
@@ -249,7 +281,7 @@ export default function TokenLaunchWizard() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="liquidity">Liquidez Inicial (%)</Label>
+                <Label htmlFor="liquidity">Initial Liquidity (%)</Label>
                 <Select value={formData.liquidityPercent} onValueChange={(value) => setFormData(prev => ({ ...prev, liquidityPercent: value }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -271,8 +303,25 @@ export default function TokenLaunchWizard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
+              <Share2 className="h-5 w-5" />
+              Social Media Integration
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SocialMediaIntegration 
+              onAccountsChange={(accounts) => setFormData(prev => ({ ...prev, connectedAccounts: accounts }))}
+              connectedAccounts={formData.connectedAccounts}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {currentStep === 3 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
               <Bot className="h-5 w-5" />
-              Selección de Agentes AI
+              AI Agent Selection
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -324,7 +373,7 @@ export default function TokenLaunchWizard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="agentBudget">Presupuesto AI (CORE/mes)</Label>
+                <Label htmlFor="agentBudget">AI Budget (CORE/month)</Label>
                 <Input
                   id="agentBudget"
                   placeholder="100"
@@ -335,9 +384,9 @@ export default function TokenLaunchWizard() {
 
               <div className="flex items-center justify-between space-y-0">
                 <div className="space-y-0.5">
-                  <Label>Modo Automático</Label>
+                  <Label>Automatic Mode</Label>
                   <p className="text-sm text-muted-foreground">
-                    Los agentes actúan de forma autónoma
+                    Agents act autonomously
                   </p>
                 </div>
                 <Switch
@@ -350,17 +399,17 @@ export default function TokenLaunchWizard() {
         </Card>
       )}
 
-      {currentStep === 3 && (
+      {currentStep === 4 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
-              Estrategias de Marketing
+              Marketing Strategies
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <Label>Estrategia Principal</Label>
+              <Label>Main Strategy</Label>
               <div className="grid grid-cols-1 gap-3">
                 {marketingStrategies.map((strategy) => (
                   <div
@@ -402,7 +451,7 @@ export default function TokenLaunchWizard() {
             <Separator />
 
             <div className="space-y-4">
-              <Label>Canales de Marketing</Label>
+              <Label>Marketing Channels</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {["Twitter", "Discord", "Telegram", "Reddit", "YouTube", "TikTok"].map(channel => (
                   <div
@@ -422,7 +471,7 @@ export default function TokenLaunchWizard() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="marketingBudget">Presupuesto Marketing (CORE)</Label>
+                <Label htmlFor="marketingBudget">Marketing Budget (CORE)</Label>
                 <Input
                   id="marketingBudget"
                   placeholder="500"
@@ -432,16 +481,16 @@ export default function TokenLaunchWizard() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="duration">Duración Campaña (días)</Label>
+                <Label htmlFor="duration">Campaign Duration (days)</Label>
                 <Select value={formData.duration} onValueChange={(value) => setFormData(prev => ({ ...prev, duration: value }))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="7">7 días</SelectItem>
-                    <SelectItem value="14">14 días</SelectItem>
-                    <SelectItem value="30">30 días</SelectItem>
-                    <SelectItem value="90">90 días</SelectItem>
+                    <SelectItem value="7">7 days</SelectItem>
+                    <SelectItem value="14">14 days</SelectItem>
+                    <SelectItem value="30">30 days</SelectItem>
+                    <SelectItem value="90">90 days</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -450,40 +499,40 @@ export default function TokenLaunchWizard() {
         </Card>
       )}
 
-      {currentStep === 4 && (
+      {currentStep === 5 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5" />
-              Confirmación de Lanzamiento
+              Launch Confirmation
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h3 className="font-semibold">Configuración del Token</h3>
+                <h3 className="font-semibold">Token Configuration</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Nombre:</span>
-                    <span>{formData.name || "No especificado"}</span>
+                    <span className="text-muted-foreground">Name:</span>
+                    <span>{formData.name || "Not specified"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Símbolo:</span>
-                    <span>{formData.symbol || "No especificado"}</span>
+                    <span className="text-muted-foreground">Symbol:</span>
+                    <span>{formData.symbol || "Not specified"}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Supply:</span>
-                    <span>{formData.totalSupply || "No especificado"}</span>
+                    <span>{formData.totalSupply || "Not specified"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Precio inicial:</span>
-                    <span>{formData.initialPrice || "No especificado"} CORE</span>
+                    <span className="text-muted-foreground">Initial price:</span>
+                    <span>{formData.initialPrice || "Not specified"} CORE</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold">Agentes AI Seleccionados</h3>
+                <h3 className="font-semibold">Selected AI Agents</h3>
                 <div className="space-y-2">
                   {formData.selectedAgents.length > 0 ? (
                     formData.selectedAgents.map(agentId => {
@@ -496,7 +545,7 @@ export default function TokenLaunchWizard() {
                       )
                     })
                   ) : (
-                    <span className="text-sm text-muted-foreground">Ningún agente seleccionado</span>
+                    <span className="text-sm text-muted-foreground">No agents selected</span>
                   )}
                 </div>
               </div>
@@ -505,23 +554,23 @@ export default function TokenLaunchWizard() {
             <Separator />
 
             <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-              <h3 className="font-semibold mb-2">Resumen de Costos</h3>
+              <h3 className="font-semibold mb-2">Cost Summary</h3>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
-                  <span>Lanzamiento del token:</span>
+                  <span>Token launch:</span>
                   <span>0.1 CORE</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Agentes AI (mes):</span>
+                  <span>AI agents (month):</span>
                   <span>{formData.agentBudget || "0"} CORE</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Marketing inicial:</span>
+                  <span>Initial marketing:</span>
                   <span>{formData.budget || "0"} CORE</span>
                 </div>
                 <Separator className="my-2" />
                 <div className="flex justify-between font-semibold">
-                  <span>Total estimado:</span>
+                  <span>Estimated total:</span>
                   <span>{(0.1 + parseFloat(formData.agentBudget || "0") + parseFloat(formData.budget || "0")).toFixed(2)} CORE</span>
                 </div>
               </div>
@@ -539,17 +588,17 @@ export default function TokenLaunchWizard() {
           className="gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Anterior
+          Previous
         </Button>
 
         {currentStep === steps.length ? (
           <Button className="gap-2">
             <Rocket className="h-4 w-4" />
-            Lanzar Token
+            Launch Token
           </Button>
         ) : (
           <Button onClick={handleNext} className="gap-2">
-            Siguiente
+            Next
             <ArrowRight className="h-4 w-4" />
           </Button>
         )}

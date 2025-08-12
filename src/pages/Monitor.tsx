@@ -51,9 +51,9 @@ export default function Monitor() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "confirmed": return <Badge variant="default" className="bg-success text-success-foreground">Confirmado</Badge>
-      case "pending": return <Badge variant="secondary" className="bg-warning text-warning-foreground">Pendiente</Badge>
-      case "failed": return <Badge variant="destructive">Fallido</Badge>
+      case "confirmed": return <Badge variant="default" className="bg-success text-success-foreground">Confirmed</Badge>
+      case "pending": return <Badge variant="secondary" className="bg-warning text-warning-foreground">Pending</Badge>
+      case "failed": return <Badge variant="destructive">Failed</Badge>
       default: return <Badge variant="outline">{status}</Badge>
     }
   }
@@ -68,9 +68,16 @@ export default function Monitor() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Panel de Monitoreo</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <img 
+              src="/CorewL.png" 
+              alt="CoreWeave Logo" 
+              className="h-10 w-10 object-contain"
+            />
+            <h1 className="text-3xl font-bold text-foreground">Monitoring Panel</h1>
+          </div>
           <p className="text-muted-foreground">
-            Monitorea actividad y logs en tiempo real
+            Monitor activity and logs in real time
           </p>
         </div>
       </div>
@@ -80,12 +87,12 @@ export default function Monitor() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Agente Activo: Trading Bot Alpha
+            Active Agent: Trading Bot Alpha
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <Badge variant="default" className="bg-success text-success-foreground">Activo</Badge>
+            <Badge variant="default" className="bg-success text-success-foreground">Active</Badge>
             <span className="text-sm text-muted-foreground">Uptime: 2d 14h 30m</span>
             <span className="text-sm text-muted-foreground">Tokens: 45,670</span>
             <span className="text-sm text-muted-foreground">Gas: 0.0234 CORE</span>
@@ -102,7 +109,7 @@ export default function Monitor() {
           </TabsTrigger>
           <TabsTrigger value="messages" className="gap-2">
             <MessageSquare className="h-4 w-4" />
-            Mensajes
+            Messages
           </TabsTrigger>
           <TabsTrigger value="transactions" className="gap-2">
             <Wallet className="h-4 w-4" />
@@ -110,7 +117,7 @@ export default function Monitor() {
           </TabsTrigger>
           <TabsTrigger value="test" className="gap-2">
             <Send className="h-4 w-4" />
-            Pruebas
+            Tests
           </TabsTrigger>
         </TabsList>
 
@@ -118,10 +125,10 @@ export default function Monitor() {
         <TabsContent value="logs">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Logs del Sistema</CardTitle>
+              <CardTitle>System Logs</CardTitle>
               <Button variant="outline" size="sm" className="gap-2">
                 <Download className="h-4 w-4" />
-                Exportar
+                Export
               </Button>
             </CardHeader>
             <CardContent>
@@ -153,7 +160,7 @@ export default function Monitor() {
         <TabsContent value="messages">
           <Card>
             <CardHeader>
-              <CardTitle>Historial de Mensajes</CardTitle>
+              <CardTitle>Message History</CardTitle>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[400px]">
@@ -180,7 +187,7 @@ export default function Monitor() {
         <TabsContent value="transactions">
           <Card>
             <CardHeader>
-              <CardTitle>Actividad Blockchain</CardTitle>
+              <CardTitle>Blockchain Activity</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -211,42 +218,42 @@ export default function Monitor() {
         <TabsContent value="test">
           <Card>
             <CardHeader>
-              <CardTitle>Enviar Mensaje de Prueba</CardTitle>
+              <CardTitle>Send Test Message</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Escribe un mensaje para probar el agente..."
+                    placeholder="Write a message to test the agent..."
                     value={testMessage}
                     onChange={(e) => setTestMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   />
                   <Button onClick={handleSendMessage} className="gap-2">
                     <Send className="h-4 w-4" />
-                    Enviar
+                    Send
                   </Button>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button variant="outline" onClick={() => setTestMessage("¿Cuál es el precio actual de CORE?")}>
-                    Consultar Precio
+                  <Button variant="outline" onClick={() => setTestMessage("What is the current CORE price?")}>
+                    Check Price
                   </Button>
-                  <Button variant="outline" onClick={() => setTestMessage("Analiza las mejores oportunidades DeFi")}>
-                    Análisis DeFi
+                  <Button variant="outline" onClick={() => setTestMessage("Analyze the best DeFi opportunities")}>
+                    DeFi Analysis
                   </Button>
-                  <Button variant="outline" onClick={() => setTestMessage("Ejecuta una operación de prueba")}>
-                    Operación Prueba
+                  <Button variant="outline" onClick={() => setTestMessage("Execute a test operation")}>
+                    Test Operation
                   </Button>
                 </div>
 
                 <div className="p-4 bg-muted/50 rounded-lg">
-                  <h4 className="text-sm font-medium mb-2">Comandos Útiles:</h4>
+                  <h4 className="text-sm font-medium mb-2">Useful Commands:</h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• <code>/status</code> - Estado del agente</li>
-                    <li>• <code>/balance</code> - Balance de wallet</li>
-                    <li>• <code>/price [token]</code> - Precio de token</li>
-                    <li>• <code>/stop</code> - Pausar agente</li>
+                    <li>• <code>/status</code> - Agent status</li>
+                    <li>• <code>/balance</code> - Wallet balance</li>
+                    <li>• <code>/price [token]</code> - Token price</li>
+                    <li>• <code>/stop</code> - Pause agent</li>
                   </ul>
                 </div>
               </div>

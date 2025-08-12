@@ -12,6 +12,7 @@ import {
   Users
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
+import { WalletConnect } from "@/components/wallet-connect"
 
 import {
   Sidebar,
@@ -28,15 +29,15 @@ import {
 
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Lanzar Token", url: "/launch", icon: Rocket },
-  { title: "Mis Lanzamientos", url: "/my-tokens", icon: Target },
-  { title: "Monitoreo AI", url: "/monitor", icon: Activity },
+  { title: "Launch Token", url: "/launch", icon: Rocket },
+  { title: "My Launches", url: "/my-tokens", icon: Target },
+  { title: "AI Monitoring", url: "/monitor", icon: Activity },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ]
 
 const toolsItems = [
-  { title: "Estrategias AI", url: "/strategies", icon: Users },
-  { title: "Configuración", url: "/settings", icon: Settings },
+  { title: "AI Strategies", url: "/strategies", icon: Users },
+  { title: "Settings", url: "/settings", icon: Settings },
 ]
 
 export function AppSidebar() {
@@ -66,21 +67,30 @@ export function AppSidebar() {
         {/* Logo/Brand */}
         <div className="px-6 pb-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Rocket className="h-4 w-4 text-primary-foreground" />
+            <div className="flex h-8 w-8 items-center justify-center">
+              <img 
+                src="/CorewL.png" 
+                alt="CoreWeave Logo" 
+                className="h-8 w-8 object-contain"
+              />
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <span className="text-sm font-semibold">CoreDao AI</span>
+                <span className="text-sm font-semibold">CoreWeave</span>
                 <span className="text-xs text-muted-foreground">Token Launchpad</span>
               </div>
             )}
           </div>
         </div>
 
+        {/* Wallet Connection */}
+        <div className={`${collapsed ? 'px-2' : 'px-6'} pb-4`}>
+          <WalletConnect collapsed={collapsed} />
+        </div>
+
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Principal</SidebarGroupLabel>
+          <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -99,7 +109,7 @@ export function AppSidebar() {
 
         {/* Tools */}
         <SidebarGroup>
-          <SidebarGroupLabel>Herramientas</SidebarGroupLabel>
+          <SidebarGroupLabel>Tools</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {toolsItems.map((item) => (
@@ -122,7 +132,7 @@ export function AppSidebar() {
             <NavLink to="/launch">
               <div className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-primary-foreground transition-colors hover:bg-primary-hover">
                 <Rocket className="h-4 w-4" />
-                <span className="text-sm font-medium">Lanzar Token</span>
+                <span className="text-sm font-medium">Launch Token</span>
               </div>
             </NavLink>
           </div>

@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { ArrowLeft, Bot, Brain, Wallet, Settings, Save } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useWallet } from "@/hooks/use-wallet"
+import { WalletConnect } from "@/components/wallet-connect"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,19 +14,70 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 
 const templates = [
-  { id: "trading", name: "DeFi Trading Bot", description: "Automatiza trading en DEXs" },
-  { id: "analytics", name: "Market Analyst", description: "Análisis de mercado y datos" },
-  { id: "security", name: "Security Monitor", description: "Monitoreo de contratos inteligentes" },
-  { id: "defi", name: "DeFi Manager", description: "Gestión de protocolos DeFi" },
-  { id: "custom", name: "Personalizado", description: "Configura desde cero" }
+  { id: "trading", name: "DeFi Trading Bot", description: "Automate trading on DEXs" },
+  { id: "analytics", name: "Market Analyst", description: "Market analysis and data" },
+  { id: "security", name: "Security Monitor", description: "Smart contract monitoring" },
+  { id: "defi", name: "DeFi Manager", description: "DeFi protocol management" },
+  { id: "custom", name: "Custom", description: "Configure from scratch" }
 ]
 
 const providers = [
   { id: "openai", name: "OpenAI", models: ["GPT-4", "GPT-3.5-turbo"] },
   { id: "gemini", name: "Google Gemini", models: ["Gemini Pro", "Gemini Ultra"] },
   { id: "claude", name: "Anthropic Claude", models: ["Claude-3", "Claude-2"] },
-  { id: "custom", name: "Custom API", models: ["Personalizado"] }
+  { id: "custom", name: "Custom API", models: ["Custom"] }
 ]
+
+function WalletConnectSection() {
+  const { isConnected, address, isCoreDaoChain, balance } = useWallet();
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between p-4 border rounded-lg">
+        <div className="flex-1">
+          {isConnected ? (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                <span className="text-sm font-medium">Wallet Connected</span>
+                {!isCoreDaoChain && (
+                  <Badge variant="destructive" className="text-xs">Wrong Network</Badge>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {address?.slice(0, 6)}...{address?.slice(-4)}
+              </p>
+              {balance && (
+                <p className="text-xs text-muted-foreground">
+                  Balance: {parseFloat(balance.formatted).toFixed(4)} {balance.symbol}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 bg-gray-400 rounded-full"></div>
+                <span className="text-sm font-medium">No Wallet Connected</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Connect your wallet to enable agent blockchain interactions
+              </p>
+            </div>
+          )}
+        </div>
+        <WalletConnect />
+      </div>
+      
+      {isConnected && !isCoreDaoChain && (
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-sm text-yellow-800">
+            Please switch to CoreDAO network to enable full functionality.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function CreateAgent() {
   const [formData, setFormData] = useState({
@@ -65,9 +118,16 @@ export default function CreateAgent() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Crear Nuevo Agente</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <img 
+              src="/CorewL.png" 
+              alt="CoreWeave Logo" 
+              className="h-10 w-10 object-contain"
+            />
+            <h1 className="text-3xl font-bold text-foreground">Create New Agent</h1>
+          </div>
           <p className="text-muted-foreground">
-            Configura un agente de IA autónomo para CoreDao
+            Configure an autonomous AI agent for CoreDao
           </p>
         </div>
       </div>
@@ -78,26 +138,26 @@ export default function CreateAgent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bot className="h-5 w-5" />
-              Información Básica
+              Basic Information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre del Agente</Label>
+                <Label htmlFor="name">Agent Name</Label>
                 <Input
                   id="name"
-                  placeholder="ej. Trading Bot Alpha"
+                  placeholder="e.g., Trading Bot Alpha"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="template">Plantilla</Label>
+                <Label htmlFor="template">Template</Label>
                 <Select value={formData.template} onValueChange={(value) => setFormData(prev => ({ ...prev, template: value }))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona una plantilla" />
+                    <SelectValue placeholder="Select a template" />
                   </SelectTrigger>
                   <SelectContent>
                     {templates.map((template) => (
@@ -114,10 +174,10 @@ export default function CreateAgent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Descripción</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
-                placeholder="Describe el propósito y funcionalidad de tu agente..."
+                placeholder="Describe the purpose and functionality of your agent..."
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               />
@@ -130,16 +190,16 @@ export default function CreateAgent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Brain className="h-5 w-5" />
-              Configuración de IA
+              AI Configuration
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="provider">Proveedor de IA</Label>
+                <Label htmlFor="provider">AI Provider</Label>
                 <Select value={formData.provider} onValueChange={handleProviderChange}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un proveedor" />
+                    <SelectValue placeholder="Select a provider" />
                   </SelectTrigger>
                   <SelectContent>
                     {providers.map((provider) => (
@@ -153,10 +213,10 @@ export default function CreateAgent() {
 
               {selectedProvider && (
                 <div className="space-y-2">
-                  <Label htmlFor="model">Modelo</Label>
+                  <Label htmlFor="model">Model</Label>
                   <Select value={formData.model} onValueChange={(value) => setFormData(prev => ({ ...prev, model: value }))}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecciona un modelo" />
+                      <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
                     <SelectContent>
                       {selectedProvider.models.map((model) => (
@@ -183,7 +243,7 @@ export default function CreateAgent() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="temperature">Temperatura</Label>
+                <Label htmlFor="temperature">Temperature</Label>
                 <Input
                   id="temperature"
                   type="number"
@@ -197,7 +257,7 @@ export default function CreateAgent() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="gasLimit">Límite de Gas (CORE)</Label>
+                <Label htmlFor="gasLimit">Gas Limit (CORE)</Label>
                 <Input
                   id="gasLimit"
                   type="number"
@@ -210,10 +270,10 @@ export default function CreateAgent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="systemPrompt">Prompt del Sistema</Label>
+              <Label htmlFor="systemPrompt">System Prompt</Label>
               <Textarea
                 id="systemPrompt"
-                placeholder="Define el comportamiento y personalidad del agente..."
+                placeholder="Define the agent's behavior and personality..."
                 value={formData.systemPrompt}
                 onChange={(e) => setFormData(prev => ({ ...prev, systemPrompt: e.target.value }))}
                 rows={4}
@@ -227,30 +287,27 @@ export default function CreateAgent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Wallet className="h-5 w-5" />
-              Configuración de Wallet
+              Wallet Configuration
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Conectar Wallet CoreDao</Label>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Connect CoreDao Wallet</Label>
                 <p className="text-sm text-muted-foreground">
-                  Permite al agente interactuar con contratos inteligentes
+                  Connect your wallet to allow the agent to interact with smart contracts
                 </p>
               </div>
-              <Switch
-                checked={formData.walletConnect}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, walletConnect: checked }))}
-              />
+              <WalletConnectSection />
             </div>
 
             <Separator />
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Trading Automático</Label>
+                <Label>Automatic Trading</Label>
                 <p className="text-sm text-muted-foreground">
-                  Permite al agente ejecutar transacciones automáticamente
+                  Allows the agent to execute transactions automatically
                 </p>
               </div>
               <Switch
@@ -263,11 +320,11 @@ export default function CreateAgent() {
               <div className="p-4 bg-warning/10 rounded-lg border border-warning/20">
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="outline" className="text-warning border-warning">
-                    Precaución
+                    Caution
                   </Badge>
                 </div>
                 <p className="text-sm text-warning-foreground">
-                  El trading automático puede resultar en pérdidas. Asegúrate de configurar límites apropiados.
+                  Automatic trading can result in losses. Make sure to set appropriate limits.
                 </p>
               </div>
             )}
@@ -279,43 +336,43 @@ export default function CreateAgent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Configuración Avanzada
+              Advanced Configuration
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Permisos de Ejecución</Label>
+                <Label>Execution Permissions</Label>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Switch id="read-only" />
-                    <Label htmlFor="read-only" className="text-sm">Solo lectura</Label>
+                    <Label htmlFor="read-only" className="text-sm">Read only</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch id="limited-tx" />
-                    <Label htmlFor="limited-tx" className="text-sm">Transacciones limitadas</Label>
+                    <Label htmlFor="limited-tx" className="text-sm">Limited transactions</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch id="full-access" />
-                    <Label htmlFor="full-access" className="text-sm">Acceso completo</Label>
+                    <Label htmlFor="full-access" className="text-sm">Full access</Label>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Programación</Label>
+                <Label>Scheduling</Label>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Switch id="continuous" defaultChecked />
-                    <Label htmlFor="continuous" className="text-sm">Ejecutar continuamente</Label>
+                    <Label htmlFor="continuous" className="text-sm">Run continuously</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch id="scheduled" />
-                    <Label htmlFor="scheduled" className="text-sm">Programar horarios</Label>
+                    <Label htmlFor="scheduled" className="text-sm">Schedule times</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Switch id="triggered" />
-                    <Label htmlFor="triggered" className="text-sm">Solo por eventos</Label>
+                    <Label htmlFor="triggered" className="text-sm">Event-triggered only</Label>
                   </div>
                 </div>
               </div>
@@ -326,11 +383,11 @@ export default function CreateAgent() {
         {/* Submit */}
         <div className="flex gap-4 justify-end">
           <Link to="/">
-            <Button variant="outline">Cancelar</Button>
+            <Button variant="outline">Cancel</Button>
           </Link>
           <Button type="submit" className="gap-2">
             <Save className="h-4 w-4" />
-            Crear Agente
+            Create Agent
           </Button>
         </div>
       </form>

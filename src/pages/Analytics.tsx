@@ -15,9 +15,16 @@ export default function Analytics() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Analytics</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <img 
+              src="/CorewL.png" 
+              alt="CoreWeave Logo" 
+              className="h-10 w-10 object-contain"
+            />
+            <h1 className="text-3xl font-bold text-foreground">Analytics</h1>
+          </div>
           <p className="text-muted-foreground">
-            Métricas y análisis de rendimiento de tus agentes
+            Performance metrics and analysis of your agents
           </p>
         </div>
       </div>
@@ -26,45 +33,45 @@ export default function Analytics() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sesiones Totales</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">247</div>
-            <p className="text-xs text-muted-foreground">+12% vs mes anterior</p>
+            <p className="text-xs text-muted-foreground">+12% vs previous month</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Volumen Transacciones</CardTitle>
+            <CardTitle className="text-sm font-medium">Transaction Volume</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">$45,231</div>
-            <p className="text-xs text-muted-foreground">+8.2% vs semana anterior</p>
+            <p className="text-xs text-muted-foreground">+8.2% vs previous week</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Gas Promedio</CardTitle>
+            <CardTitle className="text-sm font-medium">Average Gas</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">0.0156</div>
-            <p className="text-xs text-muted-foreground">CORE por transacción</p>
+            <p className="text-xs text-muted-foreground">CORE per transaction</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Eficiencia</CardTitle>
+            <CardTitle className="text-sm font-medium">Efficiency</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">94.2%</div>
-            <p className="text-xs text-muted-foreground">Operaciones exitosas</p>
+            <p className="text-xs text-muted-foreground">Successful operations</p>
           </CardContent>
         </Card>
       </div>
@@ -72,27 +79,27 @@ export default function Analytics() {
       {/* Analytics Tabs */}
       <Tabs defaultValue="performance" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="performance">Rendimiento</TabsTrigger>
-          <TabsTrigger value="usage">Uso</TabsTrigger>
-          <TabsTrigger value="costs">Costos</TabsTrigger>
+          <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="usage">Usage</TabsTrigger>
+          <TabsTrigger value="costs">Costs</TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Gráfico de Rendimiento</CardTitle>
+                <CardTitle>Performance Chart</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-lg">
-                  <p className="text-muted-foreground">Gráfico de rendimiento por implementar</p>
+                  <p className="text-muted-foreground">Performance chart to be implemented</p>
                 </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Top Agentes</CardTitle>
+                <CardTitle>Top Agents</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -117,11 +124,11 @@ export default function Analytics() {
         <TabsContent value="usage">
           <Card>
             <CardHeader>
-              <CardTitle>Uso de Tokens por Agente</CardTitle>
+              <CardTitle>Token Usage by Agent</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] flex items-center justify-center bg-muted/20 rounded-lg">
-                <p className="text-muted-foreground">Gráfico de uso de tokens por implementar</p>
+                <p className="text-muted-foreground">Token usage chart to be implemented</p>
               </div>
             </CardContent>
           </Card>
@@ -130,11 +137,11 @@ export default function Analytics() {
         <TabsContent value="costs">
           <Card>
             <CardHeader>
-              <CardTitle>Análisis de Costos</CardTitle>
+              <CardTitle>Cost Analysis</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[400px] flex items-center justify-center bg-muted/20 rounded-lg">
-                <p className="text-muted-foreground">Análisis de costos por implementar</p>
+                <p className="text-muted-foreground">Cost analysis to be implemented</p>
               </div>
             </CardContent>
           </Card>
