@@ -11,7 +11,8 @@ import {
   TrendingUp,
   Users,
   Factory,
-  Brain
+  Brain,
+  Home
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { WalletConnect } from "@/components/wallet-connect"
@@ -30,9 +31,10 @@ import {
 } from "@/components/ui/sidebar"
 
 const mainItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Inicio", url: "/", icon: Home },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Launch Token", url: "/launch", icon: Rocket },
-  { title: "Token Factory", url: "/factory", icon: Factory },
+  { title: "Token Factory", url: "/token-factory", icon: Factory },
 
   { title: "AI Monitoring", url: "/monitor", icon: Activity },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
@@ -40,7 +42,7 @@ const mainItems = [
 
 const toolsItems = [
   { title: "AI Strategies", url: "/strategies", icon: Users },
-  { title: "AI Agent Manager", url: "/ai-agents", icon: Brain },
+  { title: "AI Agent Manager", url: "/ai-agent-manager", icon: Brain },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 

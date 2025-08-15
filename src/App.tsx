@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Layout } from "@/components/layout";
+import Landing from "./pages/Landing";
 import TokenDashboard from "./pages/TokenDashboard";
 import TokenLaunchWizard from "./pages/TokenLaunchWizard";
 import TokenFactory from './pages/TokenFactory';
@@ -31,20 +32,18 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<TokenDashboard />} />
-                  <Route path="/launch" element={<TokenLaunchWizard />} />
-                  <Route path="/factory" element={<TokenFactory />} />
-                  <Route path="/ai-agents" element={<AIAgentManager />} />
-                  <Route path="/monitor" element={<Monitor />} />
-                  <Route path="/analytics" element={<Analytics />} />
-                  <Route path="/strategies" element={<Strategies />} />
-                  <Route path="/settings" element={<Settings />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Layout>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/dashboard" element={<Layout><TokenDashboard /></Layout>} />
+                <Route path="/launch" element={<Layout><TokenLaunchWizard /></Layout>} />
+                <Route path="/token-factory" element={<Layout><TokenFactory /></Layout>} />
+                <Route path="/ai-agent-manager" element={<Layout><AIAgentManager /></Layout>} />
+                <Route path="/monitor" element={<Layout><Monitor /></Layout>} />
+                <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
+                <Route path="/strategies" element={<Layout><Strategies /></Layout>} />
+                <Route path="/settings" element={<Layout><Settings /></Layout>} />
+                <Route path="*" element={<Layout><NotFound /></Layout>} />
+              </Routes>
             </BrowserRouter>
           </TooltipProvider>
         </ThemeProvider>
