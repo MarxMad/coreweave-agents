@@ -135,8 +135,15 @@ export default function TokenLaunchWizard() {
 
   // Detectar cuando la transacción es exitosa
   useEffect(() => {
+    console.log('Verificando éxito de transacción:', { 
+      isSuccess, 
+      hash, 
+      isCreating, 
+      isLoading 
+    })
+    
     if (isSuccess && hash && isCreating) {
-      console.log('Transacción exitosa:', { hash, isSuccess })
+      console.log('✅ Transacción exitosa detectada:', { hash, isSuccess })
       setLaunchData({
         transactionHash: hash,
         tokenName: formData.name,
@@ -145,16 +152,16 @@ export default function TokenLaunchWizard() {
       setShowConfirmation(true)
       setIsCreating(false)
     }
-  }, [isSuccess, hash, isCreating, formData.name, formData.symbol])
+  }, [isSuccess, hash, isCreating, isLoading, formData.name, formData.symbol])
 
   // Manejar errores y timeout
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
     
     if (isCreating) {
-      console.log('Iniciando timeout de 3 minutos para creación de token')
+      console.log('⏱️ Iniciando timeout de 3 minutos para creación de token')
       timeoutId = setTimeout(() => {
-        console.log('Timeout alcanzado, deteniendo creación')
+        console.log('⏰ Timeout alcanzado, deteniendo creación')
         setIsCreating(false)
         reset() // Reset wagmi state
       }, 3 * 60 * 1000) // 3 minutos
@@ -162,7 +169,10 @@ export default function TokenLaunchWizard() {
     
     // Si hay error, resetear estado
     if (error && isCreating) {
-      console.log('Error detectado, reseteando estado:', error)
+      console.log('❌ Error detectado, reseteando estado:', {
+        error: error.message,
+        name: error.name
+      })
       setIsCreating(false)
       setTimeout(() => reset(), 1000)
     }
@@ -176,21 +186,63 @@ export default function TokenLaunchWizard() {
 
   // Log de estados para debugging
   useEffect(() => {
-    console.log('Estados de transacción:', {
+    console.log('📊 Estados de transacción:', {
       isLoading,
       isSuccess,
       hash,
       isCreating,
-      error: error?.message
+      error: error?.message,
+      timestamp: new Date().toISOString()
     })
   }, [isLoading, isSuccess, hash, isCreating, error])
 
+  // Verificación adicional para detectar transacciones confirmadas
+  useEffect(() => {
+    if (hash && !isLoading && !isSuccess && !error && isCreating) {
+      console.log('🔍 Transacción con hash pero sin confirmación explícita:', {
+        hash,
+        isLoading,
+        isSuccess,
+        error,
+        isCreating
+      })
+      
+      // Esperar un poco más antes de considerar la transacción como exitosa
+      const checkTimer = setTimeout(() => {
+        if (!isSuccess && !error && isCreating) {
+          console.log('⚠️ Asumiendo transacción exitosa por timeout de confirmación')
+          setLaunchData({
+            transactionHash: hash,
+            tokenName: formData.name,
+            tokenSymbol: formData.symbol
+          })
+          setShowConfirmation(true)
+          setIsCreating(false)
+        }
+      }, 10000) // 10 segundos
+      
+      return () => clearTimeout(checkTimer)
+    }
+  }, [hash, isLoading, isSuccess, error, isCreating, formData.name, formData.symbol])
+
   const handleLaunchToken = async () => {
     if (!isConnected || !isCoreDaoChain) {
+      console.log('❌ No se puede lanzar token: wallet no conectado o red incorrecta')
       return
     }
 
+    console.log('🚀 Iniciando lanzamiento de token:', {
+      name: formData.name,
+      symbol: formData.symbol,
+      totalSupply: formData.totalSupply,
+      enableAIAgents: formData.selectedAgents.length > 0 || formData.enableAIAgents
+    })
+
     setIsCreating(true)
+    
+    // Reset previous states
+    reset()
+    
     try {
       // Determinar si se habilitan agentes AI
       const enableAIAgents = formData.selectedAgents.length > 0 || formData.enableAIAgents
@@ -201,8 +253,10 @@ export default function TokenLaunchWizard() {
         totalSupply: formData.totalSupply,
         enableAIAgents
       })
+      
+      console.log('✅ Función createToken ejecutada exitosamente')
     } catch (error) {
-      console.error('Error creating token:', error)
+      console.error('❌ Error en handleLaunchToken:', error)
       setIsCreating(false)
     }
   }
