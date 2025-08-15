@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle, AlertTriangle, Share2, Wallet } from "lucide-react"
+import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle, AlertTriangle, Share2, Wallet, Copy, ExternalLink, Plus } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -286,13 +286,120 @@ export default function TokenLaunchWizard() {
   // Mostrar pantalla de confirmación si el token fue creado exitosamente
   if (showConfirmation && launchData) {
     return (
-      <TokenLaunchConfirmation
-        transactionHash={launchData.transactionHash}
-        tokenName={launchData.tokenName}
-        tokenSymbol={launchData.tokenSymbol}
-        onGoToDashboard={handleGoToDashboard}
-        onCreateAnother={handleCreateAnother}
-      />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-950 flex items-center justify-center p-4">
+        <Card className="w-full max-w-2xl">
+          <CardContent className="pt-8">
+            <div className="text-center space-y-6">
+              {/* Icono de éxito animado */}
+              <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 animate-pulse" />
+              </div>
+              
+              {/* Título de éxito */}
+              <div>
+                <h1 className="text-3xl font-bold text-green-900 dark:text-green-100 mb-2">
+                  🎉 ¡Token Creado Exitosamente!
+                </h1>
+                <p className="text-lg text-green-700 dark:text-green-300">
+                  Tu token <strong>{launchData.tokenName} ({launchData.tokenSymbol})</strong> ha sido desplegado en CoreDAO
+                </p>
+              </div>
+
+              {/* Información del token */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-green-200 dark:border-green-800">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Target className="h-5 w-5 text-green-600" />
+                  Detalles del Token
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Nombre:</span>
+                    <p className="font-medium">{launchData.tokenName}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Símbolo:</span>
+                    <p className="font-medium">{launchData.tokenSymbol}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Supply Total:</span>
+                    <p className="font-medium">{Number(formData.totalSupply).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Hash de Transacción:</span>
+                    <div className="flex items-center gap-2">
+                      <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                        {launchData.transactionHash.slice(0, 10)}...{launchData.transactionHash.slice(-8)}
+                      </code>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(launchData.transactionHash)}
+                        className="h-6 w-6 p-0"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Acciones rápidas */}
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <Button
+                    variant="outline"
+                    onClick={() => window.open(`https://scan.coredao.org/tx/${launchData.transactionHash}`, '_blank')}
+                    className="gap-2"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Ver en CoreScan
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const tokenInfo = `🎉 ¡Nuevo token creado!\n\n📛 Nombre: ${launchData.tokenName}\n🔤 Símbolo: ${launchData.tokenSymbol}\n📊 Supply: ${Number(formData.totalSupply).toLocaleString()}\n🔗 Hash: ${launchData.transactionHash}\n\n#CoreDAO #DeFi #Token`
+                      navigator.clipboard.writeText(tokenInfo)
+                    }}
+                    className="gap-2"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    Compartir Info
+                  </Button>
+                </div>
+
+                <div className="flex gap-3 justify-center">
+                  <Button
+                    onClick={handleCreateAnother}
+                    variant="outline"
+                    className="gap-2"
+                  >
+                    <Rocket className="h-4 w-4" />
+                    Crear Otro Token
+                  </Button>
+                  <Button
+                    onClick={handleGoToDashboard}
+                    className="gap-2 bg-green-600 hover:bg-green-700"
+                  >
+                    <Target className="h-4 w-4" />
+                    Ir al Dashboard
+                  </Button>
+                </div>
+              </div>
+
+              {/* Próximos pasos */}
+              <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">🚀 Próximos Pasos</h4>
+                <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1 text-left">
+                  <li>• Añade liquidez en un DEX para permitir trading</li>
+                  <li>• Configura los agentes AI si los habilitaste</li>
+                  <li>• Comparte tu token en redes sociales</li>
+                  <li>• Monitorea las métricas en el dashboard</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     )
   }
 
@@ -656,23 +763,136 @@ export default function TokenLaunchWizard() {
               </div>
             )}
             {isCreating && (
-              <div className="text-sm text-muted-foreground space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                  <span>Procesando transacción...</span>
-                </div>
-                {hash && (
-                  <div className="text-xs">
-                    <span className="text-muted-foreground">Hash: </span>
-                    <span className="font-mono">{hash.slice(0, 10)}...{hash.slice(-8)}</span>
+              <Card className="mt-4">
+                <CardContent className="pt-6">
+                  <div className="space-y-4">
+                    {/* Estado de procesamiento */}
+                    {isLoading && !error && (
+                      <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="flex-shrink-0">
+                          <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-blue-900 dark:text-blue-100">Procesando Transacción</h4>
+                          <p className="text-sm text-blue-700 dark:text-blue-300">
+                            {!hash ? 'Esperando confirmación en wallet...' : 'Confirmando transacción en blockchain...'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Hash de transacción */}
+                    {hash && (
+                      <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg border">
+                        <h4 className="font-semibold mb-2 flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          Transacción Enviada
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">Hash:</span>
+                            <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
+                              {hash.slice(0, 20)}...{hash.slice(-20)}
+                            </code>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => navigator.clipboard.writeText(hash)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.open(`https://scan.coredao.org/tx/${hash}`, '_blank')}
+                              className="gap-2"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              Ver en Explorer
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Estado de error */}
+                    {error && (
+                      <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+                        <div className="flex items-start gap-3">
+                          <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-red-900 dark:text-red-100 mb-2">Error en la Transacción</h4>
+                            <div className="space-y-2">
+                              <p className="text-sm text-red-700 dark:text-red-300">
+                                {error.message.includes('User rejected') 
+                                  ? '❌ Transacción cancelada por el usuario'
+                                  : error.message.includes('insufficient funds')
+                                  ? '💰 Fondos insuficientes para pagar la tarifa'
+                                  : error.message.includes('Internal JSON-RPC error')
+                                  ? '🔧 Error de contrato - Verifica que la dirección del contrato sea correcta'
+                                  : error.message.includes('network')
+                                  ? '🌐 Error de red - Verifica tu conexión a CoreDAO'
+                                  : `⚠️ ${error.message}`
+                                }
+                              </p>
+                              
+                              {error.message.includes('Internal JSON-RPC error') && (
+                                <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200 dark:border-yellow-800">
+                                  <h5 className="font-medium text-yellow-900 dark:text-yellow-100 mb-1">💡 Posibles soluciones:</h5>
+                                  <ul className="text-xs text-yellow-800 dark:text-yellow-200 space-y-1">
+                                    <li>• Verifica que tengas suficiente CORE para la tarifa</li>
+                                    <li>• Asegúrate de estar conectado a la red CoreDAO</li>
+                                    <li>• El contrato podría estar pausado temporalmente</li>
+                                    <li>• Intenta reducir el gas limit o aumentar el gas price</li>
+                                  </ul>
+                                </div>
+                              )}
+                              
+                              <div className="flex gap-2 mt-3">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setIsCreating(false)
+                                    reset()
+                                  }}
+                                  className="gap-2"
+                                >
+                                  🔄 Intentar de Nuevo
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => navigator.clipboard.writeText(error.message)}
+                                  className="gap-2"
+                                >
+                                  <Copy className="h-3 w-3" />
+                                  Copiar Error
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Información adicional durante el proceso */}
+                    {isCreating && !error && (
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <h5 className="font-medium mb-2">ℹ️ Información:</h5>
+                        <ul className="text-xs text-muted-foreground space-y-1">
+                          <li>• La transacción puede tardar unos minutos en confirmarse</li>
+                          <li>• No cierres esta ventana hasta que se complete</li>
+                          <li>• Si la transacción falla, puedes intentar de nuevo</li>
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                )}
-                {error && (
-                  <div className="text-xs text-red-500">
-                    <span>Error: {error.message || 'Error desconocido'}</span>
-                  </div>
-                )}
-              </div>
+                </CardContent>
+              </Card>
             )}
           </div>
         ) : (
