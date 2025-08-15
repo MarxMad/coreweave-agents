@@ -49,10 +49,10 @@ contract CoreWeaveTokenFactory is ReentrancyGuard, Ownable {
         
         // Crear nuevo token
         CoreWeaveToken newToken = new CoreWeaveToken(
-            msg.sender,
-            totalSupply,
             name,
-            symbol
+            symbol,
+            totalSupply,
+            msg.sender
         );
         
         // Configurar AI si está habilitado

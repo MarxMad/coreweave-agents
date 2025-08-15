@@ -9,7 +9,9 @@ import {
   Zap,
   Target,
   TrendingUp,
-  Users
+  Users,
+  Factory,
+  Brain
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { WalletConnect } from "@/components/wallet-connect"
@@ -30,13 +32,15 @@ import {
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Launch Token", url: "/launch", icon: Rocket },
-  { title: "My Launches", url: "/my-tokens", icon: Target },
+  { title: "Token Factory", url: "/factory", icon: Factory },
+
   { title: "AI Monitoring", url: "/monitor", icon: Activity },
   { title: "Analytics", url: "/analytics", icon: BarChart3 },
 ]
 
 const toolsItems = [
   { title: "AI Strategies", url: "/strategies", icon: Users },
+  { title: "AI Agent Manager", url: "/ai-agents", icon: Brain },
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 

@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle, AlertTriangle, Share2 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,16 +12,17 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { useWallet } from "@/hooks/use-wallet"
+import { useCoreWeaveTokenFactory } from "@/hooks/use-core-weave-token-factory"
 import { switchChain } from '@wagmi/core'
 import { config } from '@/lib/wagmi'
+import { parseEther } from 'viem'
 import SocialMediaIntegration from "@/components/social-media-integration"
+import { TokenLaunchConfirmation } from "@/components/token-launch-confirmation"
 
 const steps = [
-  { id: 1, title: "Token Configuration", icon: Rocket },
-  { id: 2, title: "Social Media", icon: Share2 },
-  { id: 3, title: "AI Agents", icon: Bot },
-  { id: 4, title: "Marketing Strategies", icon: Target },
-  { id: 5, title: "Confirmation", icon: CheckCircle },
+  { id: 1, title: "Configuración del Token", icon: Rocket },
+  { id: 2, title: "Agentes AI", icon: Bot },
+  { id: 3, title: "Confirmación", icon: CheckCircle },
 ]
 
 const aiAgentTemplates = [
@@ -78,33 +79,26 @@ const marketingStrategies = [
 
 export default function TokenLaunchWizard() {
   const { isConnected, isCoreDaoChain, chainId } = useWallet()
+  const { createToken, creationFee, isLoading, isSuccess, hash, error } = useCoreWeaveTokenFactory()
+  const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
+  const [isCreating, setIsCreating] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [launchData, setLaunchData] = useState<{
+    transactionHash: string
+    tokenName: string
+    tokenSymbol: string
+  } | null>(null)
   const [formData, setFormData] = useState({
-    // Step 1: Token Config
+    // Paso 1: Configuración del Token
     name: "",
     symbol: "",
     description: "",
-    totalSupply: "",
-    initialPrice: "",
-    liquidityPercent: "50",
+    totalSupply: "1000000",
     
-    // Step 2: Social Media
-    connectedAccounts: [] as any[],
-    
-    // Step 3: AI Agents
+    // Paso 2: Agentes AI
     selectedAgents: [] as string[],
-    agentBudget: "100",
-    autoMode: true,
-    
-    // Step 4: Marketing
-    strategy: "",
-    channels: [] as string[],
-    budget: "500",
-    duration: "30",
-    
-    // Custom prompts
-    communityTone: "",
-    marketingStyle: "",
+    enableAIAgents: false,
   })
 
   const handleNext = () => {
@@ -128,16 +122,114 @@ export default function TokenLaunchWizard() {
     }))
   }
 
-  const handleChannelToggle = (channel: string) => {
+  const handleAIToggle = () => {
     setFormData(prev => ({
       ...prev,
-      channels: prev.channels.includes(channel)
-        ? prev.channels.filter(c => c !== channel)
-        : [...prev.channels, channel]
+      enableAIAgents: !prev.enableAIAgents,
+      selectedAgents: !prev.enableAIAgents ? [] : prev.selectedAgents
     }))
   }
 
+  // Detectar cuando la transacción es exitosa
+  useEffect(() => {
+    if (isSuccess && hash && isCreating) {
+      console.log('Transacción exitosa:', { hash, isSuccess })
+      setLaunchData({
+        transactionHash: hash,
+        tokenName: formData.name,
+        tokenSymbol: formData.symbol
+      })
+      setShowConfirmation(true)
+      setIsCreating(false)
+    }
+  }, [isSuccess, hash, isCreating, formData.name, formData.symbol])
+
+  // Timeout para evitar que se quede colgado indefinidamente
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+    
+    if (isCreating) {
+      console.log('Iniciando timeout de 5 minutos para creación de token')
+      timeoutId = setTimeout(() => {
+        console.log('Timeout alcanzado, deteniendo creación')
+        setIsCreating(false)
+        // Mostrar mensaje de error por timeout
+      }, 5 * 60 * 1000) // 5 minutos
+    }
+    
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [isCreating])
+
+  // Log de estados para debugging
+  useEffect(() => {
+    console.log('Estados de transacción:', {
+      isLoading,
+      isSuccess,
+      hash,
+      isCreating,
+      error: error?.message
+    })
+  }, [isLoading, isSuccess, hash, isCreating, error])
+
+  const handleLaunchToken = async () => {
+    if (!isConnected || !isCoreDaoChain) {
+      return
+    }
+
+    setIsCreating(true)
+    try {
+      // Determinar si se habilitan agentes AI
+      const enableAIAgents = formData.selectedAgents.length > 0 || formData.enableAIAgents
+
+      await createToken({
+        name: formData.name,
+        symbol: formData.symbol,
+        totalSupply: formData.totalSupply,
+        enableAIAgents
+      })
+    } catch (error) {
+      console.error('Error creating token:', error)
+      setIsCreating(false)
+    }
+  }
+
+  const handleGoToDashboard = () => {
+    navigate('/dashboard')
+  }
+
+  const handleCreateAnother = () => {
+    setShowConfirmation(false)
+    setLaunchData(null)
+    setIsCreating(false)
+    setCurrentStep(1)
+    setFormData({
+      name: "",
+      symbol: "",
+      description: "",
+      totalSupply: "1000000",
+      selectedAgents: [],
+      enableAIAgents: false
+    })
+  }
+
   const progress = (currentStep / steps.length) * 100
+
+  // Mostrar pantalla de confirmación si el token fue creado exitosamente
+  if (showConfirmation && launchData) {
+    return (
+      <TokenLaunchConfirmation
+        transactionHash={launchData.transactionHash}
+        tokenName={launchData.tokenName}
+        tokenSymbol={launchData.tokenSymbol}
+        onGoToDashboard={handleGoToDashboard}
+        onCreateAnother={handleCreateAnother}
+      />
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -259,41 +351,26 @@ export default function TokenLaunchWizard() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="supply">Total Supply</Label>
-                <Input
-                  id="supply"
-                  placeholder="1000000"
-                  value={formData.totalSupply}
-                  onChange={(e) => setFormData(prev => ({ ...prev, totalSupply: e.target.value }))}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="price">Initial Price (CORE)</Label>
-                <Input
-                  id="price"
-                  placeholder="0.001"
-                  value={formData.initialPrice}
-                  onChange={(e) => setFormData(prev => ({ ...prev, initialPrice: e.target.value }))}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="liquidity">Initial Liquidity (%)</Label>
-                <Select value={formData.liquidityPercent} onValueChange={(value) => setFormData(prev => ({ ...prev, liquidityPercent: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="30">30%</SelectItem>
-                    <SelectItem value="50">50%</SelectItem>
-                    <SelectItem value="70">70%</SelectItem>
-                    <SelectItem value="90">90%</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="supply">Total Supply</Label>
+              <Input
+                id="supply"
+                placeholder="1000000"
+                value={formData.totalSupply}
+                onChange={(e) => setFormData(prev => ({ ...prev, totalSupply: e.target.value }))}
+              />
+              <p className="text-sm text-muted-foreground">
+                Cantidad total de tokens que se crearán
+              </p>
+            </div>
+            
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <h3 className="font-semibold mb-2">Información importante:</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• El token será creado en la red CoreDAO</li>
+                <li>• Se requiere pagar una tarifa de creación</li>
+                <li>• Los agentes AI son opcionales y se configuran en el siguiente paso</li>
+              </ul>
             </div>
           </CardContent>
         </Card>
@@ -303,28 +380,25 @@ export default function TokenLaunchWizard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Share2 className="h-5 w-5" />
-              Social Media Integration
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SocialMediaIntegration 
-              onAccountsChange={(accounts) => setFormData(prev => ({ ...prev, connectedAccounts: accounts }))}
-              connectedAccounts={formData.connectedAccounts}
-            />
-          </CardContent>
-        </Card>
-      )}
-
-      {currentStep === 3 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
               <Bot className="h-5 w-5" />
-              AI Agent Selection
+              Agentes AI (Opcional)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+              <div>
+                <h3 className="font-semibold">Habilitar Agentes AI</h3>
+                <p className="text-sm text-muted-foreground">
+                  Los agentes AI pueden ayudar a gestionar tu token automáticamente
+                </p>
+              </div>
+              <Switch
+                checked={formData.enableAIAgents}
+                onCheckedChange={handleAIToggle}
+              />
+            </div>
+            
+            {formData.enableAIAgents && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {aiAgentTemplates.map((agent) => (
                 <div
@@ -368,184 +442,59 @@ export default function TokenLaunchWizard() {
                 </div>
               ))}
             </div>
-
-            <Separator />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="agentBudget">AI Budget (CORE/month)</Label>
-                <Input
-                  id="agentBudget"
-                  placeholder="100"
-                  value={formData.agentBudget}
-                  onChange={(e) => setFormData(prev => ({ ...prev, agentBudget: e.target.value }))}
-                />
-              </div>
-
-              <div className="flex items-center justify-between space-y-0">
-                <div className="space-y-0.5">
-                  <Label>Automatic Mode</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Agents act autonomously
-                  </p>
-                </div>
-                <Switch
-                  checked={formData.autoMode}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, autoMode: checked }))}
-                />
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       )}
 
-      {currentStep === 4 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
-              Marketing Strategies
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <Label>Main Strategy</Label>
-              <div className="grid grid-cols-1 gap-3">
-                {marketingStrategies.map((strategy) => (
-                  <div
-                    key={strategy.id}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      formData.strategy === strategy.id
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-border/80'
-                    }`}
-                    onClick={() => setFormData(prev => ({ ...prev, strategy: strategy.id }))}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold">{strategy.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-2">{strategy.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {strategy.tactics.map(tactic => (
-                            <Badge key={tactic} variant="outline" className="text-xs">
-                              {tactic}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      <div className={`w-5 h-5 rounded-full border-2 ${
-                        formData.strategy === strategy.id
-                          ? 'bg-primary border-primary'
-                          : 'border-border'
-                      }`}>
-                        {formData.strategy === strategy.id && (
-                          <div className="w-3 h-3 rounded-full bg-primary-foreground m-0.5" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-4">
-              <Label>Marketing Channels</Label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {["Twitter", "Discord", "Telegram", "Reddit", "YouTube", "TikTok"].map(channel => (
-                  <div
-                    key={channel}
-                    className={`p-3 rounded-lg border-2 cursor-pointer text-center transition-all ${
-                      formData.channels.includes(channel)
-                        ? 'border-primary bg-primary/5'
-                        : 'border-border hover:border-border/80'
-                    }`}
-                    onClick={() => handleChannelToggle(channel)}
-                  >
-                    <span className="text-sm font-medium">{channel}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="marketingBudget">Marketing Budget (CORE)</Label>
-                <Input
-                  id="marketingBudget"
-                  placeholder="500"
-                  value={formData.budget}
-                  onChange={(e) => setFormData(prev => ({ ...prev, budget: e.target.value }))}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="duration">Campaign Duration (days)</Label>
-                <Select value={formData.duration} onValueChange={(value) => setFormData(prev => ({ ...prev, duration: value }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="7">7 days</SelectItem>
-                    <SelectItem value="14">14 days</SelectItem>
-                    <SelectItem value="30">30 days</SelectItem>
-                    <SelectItem value="90">90 days</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {currentStep === 5 && (
+      {currentStep === 3 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5" />
-              Launch Confirmation
+              Confirmación de Lanzamiento
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h3 className="font-semibold">Token Configuration</h3>
+                <h3 className="font-semibold">Configuración del Token</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Name:</span>
-                    <span>{formData.name || "Not specified"}</span>
+                    <span className="text-muted-foreground">Nombre:</span>
+                    <span>{formData.name || "No especificado"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Symbol:</span>
-                    <span>{formData.symbol || "Not specified"}</span>
+                    <span className="text-muted-foreground">Símbolo:</span>
+                    <span>{formData.symbol || "No especificado"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Supply:</span>
-                    <span>{formData.totalSupply || "Not specified"}</span>
+                    <span className="text-muted-foreground">Suministro Total:</span>
+                    <span>{formData.totalSupply || "No especificado"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Initial price:</span>
-                    <span>{formData.initialPrice || "Not specified"} CORE</span>
+                    <span className="text-muted-foreground">Descripción:</span>
+                    <span className="text-right max-w-[200px] truncate">{formData.description || "No especificado"}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold">Selected AI Agents</h3>
+                <h3 className="font-semibold">Agentes AI Seleccionados</h3>
                 <div className="space-y-2">
-                  {formData.selectedAgents.length > 0 ? (
+                  {formData.enableAIAgents && formData.selectedAgents.length > 0 ? (
                     formData.selectedAgents.map(agentId => {
                       const agent = aiAgentTemplates.find(a => a.id === agentId)
                       return (
-                        <div key={agentId} className="flex items-center gap-2">
-                          <Bot className="h-4 w-4 text-primary" />
-                          <span className="text-sm">{agent?.name}</span>
+                        <div key={agentId} className="text-sm p-2 bg-muted/50 rounded">
+                          <span className="font-medium">{agent?.name}</span>
                         </div>
                       )
                     })
                   ) : (
-                    <span className="text-sm text-muted-foreground">No agents selected</span>
+                    <span className="text-sm text-muted-foreground">
+                      {formData.enableAIAgents ? "Ningún agente seleccionado" : "Agentes AI deshabilitados"}
+                    </span>
                   )}
                 </div>
               </div>
@@ -554,26 +503,28 @@ export default function TokenLaunchWizard() {
             <Separator />
 
             <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-              <h3 className="font-semibold mb-2">Cost Summary</h3>
+              <h3 className="font-semibold mb-2">Resumen de Costos</h3>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
-                  <span>Token launch:</span>
-                  <span>0.1 CORE</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>AI agents (month):</span>
-                  <span>{formData.agentBudget || "0"} CORE</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Initial marketing:</span>
-                  <span>{formData.budget || "0"} CORE</span>
+                  <span>Lanzamiento del token:</span>
+                  <span>{creationFee ? `${Number(creationFee) / 1e18} CORE` : 'Cargando...'}</span>
                 </div>
                 <Separator className="my-2" />
                 <div className="flex justify-between font-semibold">
-                  <span>Estimated total:</span>
-                  <span>{(0.1 + parseFloat(formData.agentBudget || "0") + parseFloat(formData.budget || "0")).toFixed(2)} CORE</span>
+                  <span>Total estimado:</span>
+                  <span>{creationFee ? `${Number(creationFee) / 1e18} CORE` : 'Cargando...'}</span>
                 </div>
               </div>
+            </div>
+
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <h3 className="font-semibold mb-2">⚠️ Información importante:</h3>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• El token será creado en la red CoreDAO</li>
+                <li>• La transacción es irreversible una vez confirmada</li>
+                <li>• Asegúrate de tener suficiente CORE para la tarifa de creación</li>
+                <li>• Los agentes AI se pueden configurar después del lanzamiento</li>
+              </ul>
             </div>
           </CardContent>
         </Card>
@@ -588,17 +539,37 @@ export default function TokenLaunchWizard() {
           className="gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          Previous
+          Anterior
         </Button>
 
         {currentStep === steps.length ? (
-          <Button className="gap-2">
-            <Rocket className="h-4 w-4" />
-            Launch Token
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button 
+              onClick={handleLaunchToken}
+              disabled={!isConnected || !isCoreDaoChain || isCreating || !formData.name || !formData.symbol}
+              className="gap-2"
+            >
+              <Rocket className="h-4 w-4" />
+              {isCreating ? 'Creando Token...' : 'Lanzar Token'}
+            </Button>
+            {isCreating && (
+              <div className="text-sm text-muted-foreground space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                  <span>Procesando transacción...</span>
+                </div>
+                {hash && (
+                  <div className="text-xs">
+                    <span className="text-muted-foreground">Hash: </span>
+                    <span className="font-mono">{hash.slice(0, 10)}...{hash.slice(-8)}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         ) : (
           <Button onClick={handleNext} className="gap-2">
-            Next
+            Siguiente
             <ArrowRight className="h-4 w-4" />
           </Button>
         )}

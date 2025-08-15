@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { ArrowLeft, Activity, MessageSquare, Wallet, Zap, Send, Download } from "lucide-react"
+import { useState, useEffect } from "react"
+import { ArrowLeft, Activity, MessageSquare, Wallet, Zap, Send, Download, RefreshCw } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,6 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useAIAgentManager } from "@/hooks/use-ai-agent-manager"
+import { useCoreWeaveToken } from "@/hooks/use-core-weave-token"
+import { useWallet } from "@/hooks/use-wallet"
+import { formatTokenAmount } from "@/lib/contracts"
 
 const mockLogs = [
   { id: 1, timestamp: "2024-01-20 14:30:25", type: "info", message: "Agent started successfully", agent: "Trading Bot Alpha" },
@@ -31,6 +35,10 @@ const mockTransactions = [
 
 export default function Monitor() {
   const [testMessage, setTestMessage] = useState("")
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const { isConnected } = useWallet()
+  const { agents, isLoading: agentsLoading, refetch: refetchAgents } = useAIAgentManager()
+  const { tokens, isLoading: tokensLoading } = useCoreWeaveToken()
 
   const handleSendMessage = () => {
     if (testMessage.trim()) {
@@ -38,6 +46,42 @@ export default function Monitor() {
       setTestMessage("")
     }
   }
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleRefresh()
+    }, 30000)
+    
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true)
+    try {
+      await refetchAgents()
+    } catch (error) {
+      console.error("Error refreshing data:", error)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
+  // Calculate real-time stats from agents and tokens
+  const activeAgents = agents?.filter(agent => agent.isActive).length || 0
+  const totalAgents = agents?.length || 0
+  const systemHealth = totalAgents > 0 ? (activeAgents / totalAgents) * 100 : 0
+  
+  // Generate activity logs from agent data
+  const activityLogs = agents?.slice(0, 10).map((agent, index) => ({
+    id: index + 1,
+    timestamp: new Date(Date.now() - Math.random() * 3600000).toISOString(),
+    type: agent.isActive ? "info" : "warning",
+    message: agent.isActive 
+      ? `Agent started successfully`
+      : `Agent is currently inactive`,
+    agent: `Agent ${agent.name || 'Unknown'}`
+  })) || mockLogs
 
   const getLogTypeColor = (type: string) => {
     switch (type) {
@@ -87,15 +131,27 @@ export default function Monitor() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-5 w-5" />
-            Active Agent: Trading Bot Alpha
+            System Status
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="ml-auto"
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Refreshing...' : 'Refresh'}
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <Badge variant="default" className="bg-success text-success-foreground">Active</Badge>
-            <span className="text-sm text-muted-foreground">Uptime: 2d 14h 30m</span>
-            <span className="text-sm text-muted-foreground">Tokens: 45,670</span>
-            <span className="text-sm text-muted-foreground">Gas: 0.0234 CORE</span>
+            <Badge variant={isConnected ? "default" : "secondary"} className={isConnected ? "bg-success text-success-foreground" : ""}>
+              {isConnected ? 'Connected' : 'Disconnected'}
+            </Badge>
+            <span className="text-sm text-muted-foreground">Active Agents: {activeAgents}/{totalAgents}</span>
+            <span className="text-sm text-muted-foreground">Tokens: {tokens?.length || 0}</span>
+            <span className="text-sm text-muted-foreground">Health: {systemHealth.toFixed(1)}%</span>
           </div>
         </CardContent>
       </Card>
@@ -134,10 +190,10 @@ export default function Monitor() {
             <CardContent>
               <ScrollArea className="h-[400px]">
                 <div className="space-y-2">
-                  {mockLogs.map((log) => (
+                  {activityLogs.map((log) => (
                     <div key={log.id} className="flex items-start gap-3 p-3 rounded-lg border border-border/50 hover:bg-accent/50 transition-colors">
                       <div className="text-xs text-muted-foreground min-w-[80px]">
-                        {log.timestamp.split(' ')[1]}
+                        {new Date(log.timestamp).toLocaleTimeString()}
                       </div>
                       <div className={`text-xs font-medium min-w-[60px] ${getLogTypeColor(log.type)}`}>
                         {log.type.toUpperCase()}
@@ -150,6 +206,14 @@ export default function Monitor() {
                       </Badge>
                     </div>
                   ))}
+                  {activityLogs.length === 0 && (
+                    <div className="text-center py-8">
+                      <Activity className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">
+                        {isConnected ? 'No activity logs available' : 'Connect wallet to view activity'}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
             </CardContent>
