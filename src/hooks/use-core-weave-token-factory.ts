@@ -487,9 +487,14 @@ export function useCoreWeaveTokenFactory() {
   const chain = chains.find(c => c.id === chainId)
   const { logNetworkError } = useErrorHandler()
   
-  const { writeContract, data: hash, isPending, error } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const { writeContract, data: hash, isPending, error, reset } = useWriteContract()
+  const { isLoading: isConfirming, isSuccess: isConfirmed, error: receiptError } = useWaitForTransactionReceipt({
     hash,
+    query: {
+      enabled: !!hash,
+      retry: 3,
+      retryDelay: 2000,
+    },
   })
   
   // Contract configuration
@@ -564,6 +569,9 @@ export function useCoreWeaveTokenFactory() {
 
   // Create token function
   const createToken = useCallback(async (params: CreateTokenParams) => {
+    // Reset previous transaction state
+    reset()
+    
     if (!userAddress) {
       toast({
         title: "Error",
@@ -644,8 +652,11 @@ export function useCoreWeaveTokenFactory() {
         description: errorMessage,
         variant: "destructive",
       })
+      
+      // Reset state after error
+      setTimeout(() => reset(), 1000)
     }
-  }, [userAddress, creationFeeResult.data, writeContract, contractConfig, toast])
+  }, [userAddress, creationFeeResult.data, writeContract, contractConfig, toast, reset])
 
   // Set creation fee (owner only)
   const setCreationFee = useCallback(async (feeInEther: string) => {
@@ -772,8 +783,9 @@ export function useCoreWeaveTokenFactory() {
     // Transaction state
     isLoading: isPending || isConfirming,
     isSuccess: isConfirmed,
-    error,
+    error: error || receiptError,
     hash,
+    reset,
   }
 }
 

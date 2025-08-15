@@ -56,7 +56,7 @@
 
 "CoreWeave Agents is available now on Core Network. Join the intelligent token revolution."
 
-"Visit coreweave-agents.com, connect your wallet, and launch your first AI-powered token in less than 5 minutes."
+"Visit https://coreweave-agents.vercel.app/, connect your wallet, and launch your first AI-powered token in less than 5 minutes."
 
 "The future of tokens is intelligent. The future is now."
 

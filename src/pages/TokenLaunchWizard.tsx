@@ -20,6 +20,7 @@ import { parseEther } from 'viem'
 import SocialMediaIntegration from "@/components/social-media-integration"
 import { TokenLaunchConfirmation } from "@/components/token-launch-confirmation"
 import { WalletConnect } from "@/components/wallet-connect"
+import { ContractDiagnostics } from "@/components/contract-diagnostics"
 
 const steps = [
   { id: 1, title: "Configuración del Token", icon: Rocket },
@@ -81,7 +82,7 @@ const marketingStrategies = [
 
 export default function TokenLaunchWizard() {
   const { isConnected, isCoreDaoChain, chainId } = useWallet()
-  const { createToken, creationFee, isLoading, isSuccess, hash, error } = useCoreWeaveTokenFactory()
+  const { createToken, creationFee, isLoading, isSuccess, hash, error, reset } = useCoreWeaveTokenFactory()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
   const [isCreating, setIsCreating] = useState(false)
@@ -146,17 +147,24 @@ export default function TokenLaunchWizard() {
     }
   }, [isSuccess, hash, isCreating, formData.name, formData.symbol])
 
-  // Timeout para evitar que se quede colgado indefinidamente
+  // Manejar errores y timeout
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
     
     if (isCreating) {
-      console.log('Iniciando timeout de 5 minutos para creación de token')
+      console.log('Iniciando timeout de 3 minutos para creación de token')
       timeoutId = setTimeout(() => {
         console.log('Timeout alcanzado, deteniendo creación')
         setIsCreating(false)
-        // Mostrar mensaje de error por timeout
-      }, 5 * 60 * 1000) // 5 minutos
+        reset() // Reset wagmi state
+      }, 3 * 60 * 1000) // 3 minutos
+    }
+    
+    // Si hay error, resetear estado
+    if (error && isCreating) {
+      console.log('Error detectado, reseteando estado:', error)
+      setIsCreating(false)
+      setTimeout(() => reset(), 1000)
     }
     
     return () => {
@@ -164,7 +172,7 @@ export default function TokenLaunchWizard() {
         clearTimeout(timeoutId)
       }
     }
-  }, [isCreating])
+  }, [isCreating, error, reset])
 
   // Log de estados para debugging
   useEffect(() => {
@@ -208,6 +216,7 @@ export default function TokenLaunchWizard() {
     setLaunchData(null)
     setIsCreating(false)
     setCurrentStep(1)
+    reset() // Reset wagmi state
     setFormData({
       name: "",
       symbol: "",
@@ -285,6 +294,9 @@ export default function TokenLaunchWizard() {
           </AlertDescription>
         </Alert>
       )}
+
+      {/* Contract Diagnostics */}
+      <ContractDiagnostics />
 
       {/* Progress */}
       <Card>
@@ -559,14 +571,36 @@ export default function TokenLaunchWizard() {
 
         {currentStep === steps.length ? (
           <div className="flex flex-col gap-2">
-            <Button 
-              onClick={handleLaunchToken}
-              disabled={!isConnected || !isCoreDaoChain || isCreating || !formData.name || !formData.symbol}
-              className="gap-2"
-            >
-              <Rocket className="h-4 w-4" />
-              {isCreating ? 'Creando Token...' : 'Lanzar Token'}
-            </Button>
+            {!isCreating ? (
+              <Button 
+                onClick={handleLaunchToken}
+                disabled={!isConnected || !isCoreDaoChain || !formData.name || !formData.symbol}
+                className="gap-2"
+              >
+                <Rocket className="h-4 w-4" />
+                Lanzar Token
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button 
+                  disabled
+                  className="gap-2 flex-1"
+                >
+                  <Rocket className="h-4 w-4" />
+                  Creando Token...
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setIsCreating(false)
+                    reset()
+                  }}
+                  className="gap-2"
+                >
+                  Cancelar
+                </Button>
+              </div>
+            )}
             {isCreating && (
               <div className="text-sm text-muted-foreground space-y-1">
                 <div className="flex items-center gap-2">
@@ -577,6 +611,11 @@ export default function TokenLaunchWizard() {
                   <div className="text-xs">
                     <span className="text-muted-foreground">Hash: </span>
                     <span className="font-mono">{hash.slice(0, 10)}...{hash.slice(-8)}</span>
+                  </div>
+                )}
+                {error && (
+                  <div className="text-xs text-red-500">
+                    <span>Error: {error.message || 'Error desconocido'}</span>
                   </div>
                 )}
               </div>

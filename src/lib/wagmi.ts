@@ -13,20 +13,20 @@ const coreDAO = {
   rpcUrls: {
     default: {
       http: [
-        'https://rpc-core.icecreamswap.com',
-        'https://core.public-rpc.com',
+        'https://rpc.coredao.org',
         'https://rpc.ankr.com/core',
+        'https://core.public-rpc.com',
         'https://1rpc.io/core',
-        'https://rpc.coredao.org'
+        'https://rpc-core.icecreamswap.com'
       ],
     },
     public: {
       http: [
-        'https://rpc-core.icecreamswap.com',
-        'https://core.public-rpc.com',
+        'https://rpc.coredao.org',
         'https://rpc.ankr.com/core',
+        'https://core.public-rpc.com',
         'https://1rpc.io/core',
-        'https://rpc.coredao.org'
+        'https://rpc-core.icecreamswap.com'
       ],
     },
   },
