@@ -48,6 +48,27 @@
 - **Wagmi** - Hooks de React para Ethereum
 - **RainbowKit** - Conexión de wallets
 - **Ethers.js** - Biblioteca para interactuar con Ethereum
+
+## 📋 Contratos Desplegados
+
+El proyecto CoreWeave Agents está basado en **3 contratos inteligentes** principales desplegados en la red **CoreDAO**:
+
+### 🏭 CoreWeaveTokenFactory
+**Dirección:** `0x8ad6bea6027a4006edd49e86ec6e5a8def0a63d2`
+- **Función:** Factory para crear nuevos tokens CoreWeave
+- **Características:** Gestión de tarifas, registro de tokens, eventos de creación
+
+### 🪙 CoreWeaveToken
+**Dirección:** `0xe3b1b985422e56da480af78238c3bc4b82f1965b`
+- **Función:** Contrato base para tokens ERC-20 personalizados
+- **Características:** Funcionalidades estándar ERC-20 con extensiones personalizadas
+
+### 🤖 AIAgentManager
+**Dirección:** `0x7cbfe8528a7e1d5448add5eb66b175e796dedac4`
+- **Función:** Gestión y coordinación de agentes de IA
+- **Características:** Configuración de agentes, automatización, integración con tokens
+
+> **Nota:** Todas las direcciones están en formato checksummed y son válidas en la red CoreDAO (Chain ID: 1116)
 - **CoreDAO** - Blockchain principal (Chain ID: 1116)
 - **Solidity ^0.8.19** - Lenguaje de contratos inteligentes
 - **OpenZeppelin** - Contratos seguros y auditados

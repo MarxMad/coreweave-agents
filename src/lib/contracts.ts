@@ -2,10 +2,10 @@ import { Address } from 'viem';
 
 // Direcciones de contratos desplegados
 export const CONTRACT_ADDRESSES = {
-  CORE_WEAVE_TOKEN: '0xe3B1B985422E56Da480af78238C3bc4B82f1965B' as Address,
-  CORE_WEAVE_TOKEN_FACTORY: '0x8aD6bEa6027a4006EDd49E86Ec6E5A8dEf0a63d2' as Address,
+  CORE_WEAVE_TOKEN: '0xe3b1b985422e56da480af78238c3bc4b82f1965b' as Address,
+  CORE_WEAVE_TOKEN_FACTORY: '0x8ad6bea6027a4006edd49e86ec6e5a8def0a63d2' as Address,
   // Agregar aquí las direcciones de otros contratos cuando se desplieguen
-  AI_AGENT_MANAGER: '0x7cbfe8528a7e1D5448Add5Eb66B175e796dEdaC4' as Address,
+  AI_AGENT_MANAGER: '0x7cbfe8528a7e1d5448add5eb66b175e796dedac4' as Address,
 } as const;
 
 // Configuración de la red CoreDAO
