@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle, AlertTriangle, Share2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle, AlertTriangle, Share2, Wallet } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useWallet } from "@/hooks/use-wallet"
 import { useCoreWeaveTokenFactory } from "@/hooks/use-core-weave-token-factory"
 import { switchChain } from '@wagmi/core'
@@ -18,6 +19,7 @@ import { config } from '@/lib/wagmi'
 import { parseEther } from 'viem'
 import SocialMediaIntegration from "@/components/social-media-integration"
 import { TokenLaunchConfirmation } from "@/components/token-launch-confirmation"
+import { WalletConnect } from "@/components/wallet-connect"
 
 const steps = [
   { id: 1, title: "Configuración del Token", icon: Rocket },
@@ -270,6 +272,19 @@ export default function TokenLaunchWizard() {
           </Button>
         )}
       </div>
+
+      {/* Wallet Connection Alert */}
+      {!isConnected && (
+        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
+          <Wallet className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <AlertDescription className="text-amber-800 dark:text-amber-200">
+            <div className="flex items-center justify-between">
+              <span>Necesitas conectar tu billetera para lanzar tokens</span>
+              <WalletConnect />
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Progress */}
       <Card>
@@ -568,7 +583,11 @@ export default function TokenLaunchWizard() {
             )}
           </div>
         ) : (
-          <Button onClick={handleNext} className="gap-2">
+          <Button 
+            onClick={handleNext} 
+            disabled={!isConnected}
+            className="gap-2"
+          >
             Siguiente
             <ArrowRight className="h-4 w-4" />
           </Button>

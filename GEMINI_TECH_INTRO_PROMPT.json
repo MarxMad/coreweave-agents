@@ -1,0 +1,34 @@
+{
+  "tech_intro_prompt": {
+    "title": "CoreWeave Agents - Ultra Tech Intro",
+    "duration": "2 seconds",
+    "style": "Hyper-Tech Futuristic",
+    "prompt": "Create an ultra-futuristic 2-second tech intro for CoreWeave Agents. Start with a black void, then explosive digital particles forming the CoreWeave logo with electric blue (#06b6d4) and purple (#8b5cf6) neon glows. Add holographic grid lines, floating hexagonal UI elements, and pulsing data streams. Include subtle AI neural network patterns in the background with glitch effects. The logo should materialize with a powerful tech sound effect, surrounded by floating geometric shapes and particle systems. Use cinematic lighting with lens flares and chromatic aberration for maximum tech impact. End with the logo fully formed, glowing intensely against a dark tech environment with subtle code rain effects.",
+    "visual_elements": [
+      "Black void opening scene",
+      "Explosive digital particle formation",
+      "CoreWeave logo materialization with neon glow",
+      "Holographic grid lines and UI elements",
+      "AI neural network background patterns",
+      "Floating geometric shapes and hexagons",
+      "Pulsing data streams and code rain",
+      "Cinematic lens flares and lighting effects",
+      "Glitch effects and chromatic aberration"
+    ],
+    "color_palette": {
+      "primary": "#06b6d4 (Electric Blue)",
+      "secondary": "#8b5cf6 (Neon Purple)",
+      "accent": "#6366f1 (Tech Blue)",
+      "background": "#000000 (Deep Black)",
+      "highlights": "#ffffff (Pure White)"
+    },
+    "animation_style": "High-energy particle systems, smooth logo formation, pulsing neon effects",
+    "audio_cues": "Powerful tech whoosh, digital materialization sound, subtle electronic hum",
+    "technical_specs": {
+      "resolution": "1920x1080 (Full HD)",
+      "frame_rate": "60fps for smooth particle effects",
+      "aspect_ratio": "16:9",
+      "render_quality": "Maximum quality with motion blur"
+    }
+  }
+}

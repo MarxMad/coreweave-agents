@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { Plus, Rocket, Users, TrendingUp, Bot, Settings, ExternalLink } from "lucide-react"
+import { Plus, Rocket, Users, TrendingUp, Bot, Settings, ExternalLink, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useCoreWeaveTokenFactory } from "@/hooks/use-core-weave-token-factory"
 import { useWallet } from "@/hooks/use-wallet"
 import { formatTokenAmount } from "@/lib/utils"
+import { WalletConnect } from "@/components/wallet-connect"
 
 interface TokenInfo {
   tokenAddress: string
@@ -26,7 +28,7 @@ interface TokenInfo {
 }
 
 export default function TokenFactory() {
-  const { address } = useWallet()
+  const { address, isConnected } = useWallet()
   const { getAllTokens, getUserTokens, creationFee, isLoading } = useCoreWeaveTokenFactory()
   const [allTokens, setAllTokens] = useState<TokenInfo[]>([])
   const [userTokens, setUserTokens] = useState<TokenInfo[]>([])
@@ -35,22 +37,15 @@ export default function TokenFactory() {
   const [viewMode, setViewMode] = useState<"all" | "my">("all")
 
   useEffect(() => {
-    const fetchTokens = async () => {
-      try {
-        const tokens = await getAllTokens()
-        setAllTokens(tokens || [])
-        
-        if (address) {
-          const myTokens = await getUserTokens(address)
-          setUserTokens(myTokens || [])
-        }
-      } catch (error) {
-        console.error('Error fetching tokens:', error)
-      }
+    // getAllTokens y getUserTokens son objetos con data, no funciones
+    if (getAllTokens.data) {
+      setAllTokens(getAllTokens.data || [])
     }
-
-    fetchTokens()
-  }, [getAllTokens, getUserTokens, address])
+    
+    if (address && getUserTokens.data) {
+      setUserTokens(getUserTokens.data || [])
+    }
+  }, [getAllTokens.data, getUserTokens.data, address])
 
   const tokensToShow = viewMode === "my" ? userTokens : allTokens
   
@@ -86,13 +81,33 @@ export default function TokenFactory() {
             Create and manage AI-powered tokens on CoreDAO
           </p>
         </div>
-        <Link to="/launch">
-          <Button className="gap-2">
+        {isConnected ? (
+          <Link to="/launch">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Create New Token
+            </Button>
+          </Link>
+        ) : (
+          <Button disabled className="gap-2">
             <Plus className="h-4 w-4" />
             Create New Token
           </Button>
-        </Link>
+        )}
       </div>
+
+      {/* Wallet Connection Alert */}
+      {!isConnected && (
+        <Alert className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
+          <Wallet className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <AlertDescription className="text-amber-800 dark:text-amber-200">
+            <div className="flex items-center justify-between">
+              <span>Conecta tu billetera para crear y gestionar tokens</span>
+              <WalletConnect />
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
