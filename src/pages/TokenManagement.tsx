@@ -92,45 +92,67 @@ export default function TokenManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="space-y-6 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+      
+      <div className="relative z-10 space-y-6 p-6">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Link to="/dashboard">
-            <Button variant="outline" size="icon">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <img 
-                src="/CorewL.png" 
-                alt="CoreWeave Logo" 
-                className="h-10 w-10 object-contain"
-              />
-              <div>
-                <h1 className="text-3xl font-bold">{mockTokenData.name}</h1>
-                <p className="text-muted-foreground">${mockTokenData.symbol} • {mockTokenData.address.slice(0, 10)}...{mockTokenData.address.slice(-8)}</p>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-gray-800/50 to-gray-700/50 backdrop-blur-sm border border-gray-600/50 p-6 mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5"></div>
+          <div className="relative z-10 flex items-center gap-4">
+            <Link to="/dashboard">
+              <Button variant="outline" size="icon" className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="relative">
+                  <img 
+                    src="/CorewL.png" 
+                    alt="CoreWeave Logo" 
+                    className="h-12 w-12 object-contain"
+                  />
+                  <div className="absolute -inset-1 bg-primary/20 rounded-full blur-sm"></div>
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                    {mockTokenData.name}
+                  </h1>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge className="bg-primary/20 text-primary border-primary/30">
+                      ${mockTokenData.symbol}
+                    </Badge>
+                    <code className="text-sm bg-gray-700/50 px-2 py-1 rounded font-mono text-gray-300">
+                      {mockTokenData.address.slice(0, 10)}...{mockTokenData.address.slice(-8)}
+                    </code>
+                  </div>
+                </div>
               </div>
             </div>
+            {isOwner && (
+              <Badge className="gap-2 bg-gradient-to-r from-primary to-purple-600 text-white shadow-lg">
+                <Settings className="h-3 w-3" />
+                Owner
+              </Badge>
+            )}
           </div>
-          {isOwner && (
-            <Badge variant="secondary" className="gap-1">
-              <Settings className="h-3 w-3" />
-              Owner
-            </Badge>
-          )}
         </div>
 
         {/* Token Info Card */}
-        <Card className="border border-gray-700/50 bg-gray-800/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5" />
+        <Card className="border border-gray-600/50 bg-gradient-to-br from-gray-800/80 to-gray-700/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-primary/10 to-purple-500/10 border-b border-gray-600/50">
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <div className="p-2 bg-primary/20 rounded-lg">
+                <Target className="h-5 w-5 text-primary" />
+              </div>
               Información del Token
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-4">
                 <div>
@@ -155,32 +177,38 @@ export default function TokenManagement() {
               </div>
               
               <div className="space-y-4">
-                <div>
-                  <Label className="text-sm text-muted-foreground">Market Cap</Label>
-                  <p className="text-lg font-semibold text-green-400">{mockTokenData.marketCap}</p>
+                <div className="relative p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
+                  <Label className="text-sm text-green-400 font-medium">Market Cap</Label>
+                  <p className="text-2xl font-bold text-green-400 mt-1">{mockTokenData.marketCap}</p>
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
-                <div>
-                  <Label className="text-sm text-muted-foreground">Precio Actual</Label>
-                  <p className="text-lg font-semibold">{mockTokenData.price}</p>
+                <div className="relative p-4 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-xl border border-blue-500/20">
+                  <Label className="text-sm text-blue-400 font-medium">Precio Actual</Label>
+                  <p className="text-2xl font-bold text-blue-400 mt-1">{mockTokenData.price}</p>
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                 </div>
-                <div>
-                  <Label className="text-sm text-muted-foreground">Cambio 24h</Label>
-                  <p className="text-lg font-semibold text-green-400">{mockTokenData.priceChange24h}</p>
+                <div className="relative p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
+                  <Label className="text-sm text-green-400 font-medium">Cambio 24h</Label>
+                  <p className="text-2xl font-bold text-green-400 mt-1">{mockTokenData.priceChange24h}</p>
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
               </div>
               
               <div className="space-y-4">
-                <div>
-                  <Label className="text-sm text-muted-foreground">Holders</Label>
-                  <p className="text-lg font-semibold">{mockTokenData.holders.toLocaleString()}</p>
+                <div className="relative p-4 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-500/20">
+                  <Label className="text-sm text-purple-400 font-medium">Holders</Label>
+                  <p className="text-2xl font-bold text-purple-400 mt-1">{mockTokenData.holders.toLocaleString()}</p>
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
                 </div>
-                <div>
-                  <Label className="text-sm text-muted-foreground">Volumen 24h</Label>
-                  <p className="text-lg font-semibold">{mockTokenData.volume24h}</p>
+                <div className="relative p-4 bg-gradient-to-br from-orange-500/10 to-yellow-500/10 rounded-xl border border-orange-500/20">
+                  <Label className="text-sm text-orange-400 font-medium">Volumen 24h</Label>
+                  <p className="text-2xl font-bold text-orange-400 mt-1">{mockTokenData.volume24h}</p>
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
                 </div>
-                <div>
-                  <Label className="text-sm text-muted-foreground">Creado</Label>
-                  <p className="text-lg font-semibold">{mockTokenData.createdAt}</p>
+                <div className="relative p-4 bg-gradient-to-br from-gray-500/10 to-gray-400/10 rounded-xl border border-gray-500/20">
+                  <Label className="text-sm text-gray-400 font-medium">Creado</Label>
+                  <p className="text-2xl font-bold text-gray-400 mt-1">{mockTokenData.createdAt}</p>
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -189,62 +217,94 @@ export default function TokenManagement() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="management" disabled={!isOwner}>Gestión</TabsTrigger>
-            <TabsTrigger value="social">Social</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-gray-800/50 to-gray-700/50 backdrop-blur-sm border border-gray-600/50 p-2 mb-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5"></div>
+            <TabsList className="grid w-full grid-cols-4 bg-transparent border-0">
+              <TabsTrigger 
+                value="overview" 
+                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-lg transition-all duration-300"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger 
+                value="management" 
+                disabled={!isOwner}
+                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-lg transition-all duration-300 disabled:opacity-50"
+              >
+                Gestión
+              </TabsTrigger>
+              <TabsTrigger 
+                value="social"
+                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-lg transition-all duration-300"
+              >
+                Social
+              </TabsTrigger>
+              <TabsTrigger 
+                value="analytics"
+                className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-lg transition-all duration-300"
+              >
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Price Chart Placeholder */}
-              <Card className="border border-gray-700/50 bg-gray-800/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
+              <Card className="border border-gray-600/50 bg-gradient-to-br from-gray-800/80 to-gray-700/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-b border-gray-600/50">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <div className="p-2 bg-green-500/20 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-green-400" />
+                    </div>
                     Gráfica de Precio
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="h-64 bg-gray-700/50 rounded-lg flex items-center justify-center">
+                <CardContent className="p-6">
+                  <div className="h-64 bg-gradient-to-br from-gray-700/50 to-gray-600/50 rounded-xl flex items-center justify-center border border-gray-600/50">
                     <div className="text-center">
-                      <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-muted-foreground">Gráfica de precio disponible próximamente</p>
+                      <div className="relative mb-4">
+                        <BarChart3 className="h-16 w-16 mx-auto text-green-400" />
+                        <div className="absolute -inset-2 bg-green-400/20 rounded-full blur-lg"></div>
+                      </div>
+                      <p className="text-muted-foreground font-medium">Gráfica de precio disponible próximamente</p>
+                      <p className="text-sm text-muted-foreground mt-1">Análisis en tiempo real</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Quick Actions */}
-              <Card className="border border-gray-700/50 bg-gray-800/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Zap className="h-5 w-5" />
+              <Card className="border border-gray-600/50 bg-gradient-to-br from-gray-800/80 to-gray-700/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+                <CardHeader className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-b border-gray-600/50">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <div className="p-2 bg-blue-500/20 rounded-lg">
+                      <Zap className="h-5 w-5 text-blue-400" />
+                    </div>
                     Acciones Rápidas
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button className="gap-2 bg-green-600 hover:bg-green-700">
+                <CardContent className="p-6 space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300">
                       <Plus className="h-4 w-4" />
                       Comprar
                     </Button>
-                    <Button variant="outline" className="gap-2">
+                    <Button variant="outline" className="gap-2 border-gray-600 hover:bg-gray-700/50 transition-all duration-300">
                       <Share2 className="h-4 w-4" />
                       Vender
                     </Button>
                   </div>
                   
-                  <div className="pt-4 border-t border-gray-700/50">
-                    <p className="text-sm text-muted-foreground mb-3">Enlaces útiles:</p>
-                    <div className="space-y-2">
-                      <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                  <div className="pt-4 border-t border-gray-600/50">
+                    <p className="text-sm text-muted-foreground mb-4 font-medium">Enlaces útiles:</p>
+                    <div className="space-y-3">
+                      <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-gray-700/30 hover:bg-gray-600/50 border-gray-600/50 transition-all duration-300">
                         <ExternalLink className="h-4 w-4" />
                         Ver en CoreScan
                       </Button>
-                      <Button variant="outline" size="sm" className="w-full justify-start gap-2">
+                      <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-gray-700/30 hover:bg-gray-600/50 border-gray-600/50 transition-all duration-300">
                         <ExternalLink className="h-4 w-4" />
                         Añadir a Wallet
                       </Button>
@@ -260,24 +320,26 @@ export default function TokenManagement() {
             {isOwner ? (
               <div className="space-y-6">
                 {/* Management Actions */}
-                <Card className="border border-gray-700/50 bg-gray-800/50">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Settings className="h-5 w-5" />
+                <Card className="border border-gray-600/50 bg-gradient-to-br from-gray-800/80 to-gray-700/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+                  <CardHeader className="bg-gradient-to-r from-red-500/10 to-orange-500/10 border-b border-gray-600/50">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <div className="p-2 bg-red-500/20 rounded-lg">
+                        <Settings className="h-5 w-5 text-red-400" />
+                      </div>
                       Gestión del Token
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Button onClick={handleBurn} className="gap-2 bg-red-600 hover:bg-red-700">
+                      <Button onClick={handleBurn} className="gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-300">
                         <Flame className="h-4 w-4" />
                         Quemar Tokens
                       </Button>
-                      <Button onClick={handleMint} className="gap-2 bg-blue-600 hover:bg-blue-700">
+                      <Button onClick={handleMint} className="gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300">
                         <Plus className="h-4 w-4" />
                         Mintear Tokens
                       </Button>
-                      <Button onClick={handleVerify} className="gap-2 bg-purple-600 hover:bg-purple-700">
+                      <Button onClick={handleVerify} className="gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-300">
                         <Shield className="h-4 w-4" />
                         Verificar Contrato
                       </Button>
@@ -286,30 +348,35 @@ export default function TokenManagement() {
                 </Card>
 
                 {/* Token Settings */}
-                <Card className="border border-gray-700/50 bg-gray-800/50">
-                  <CardHeader>
-                    <CardTitle>Configuración del Token</CardTitle>
+                <Card className="border border-gray-600/50 bg-gradient-to-br from-gray-800/80 to-gray-700/50 backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+                  <CardHeader className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-b border-gray-600/50">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <div className="p-2 bg-blue-500/20 rounded-lg">
+                        <Settings className="h-5 w-5 text-blue-400" />
+                      </div>
+                      Configuración del Token
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CardContent className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <Label htmlFor="description">Descripción</Label>
+                        <Label htmlFor="description" className="text-sm font-medium text-gray-300">Descripción</Label>
                         <Textarea 
                           id="description"
                           placeholder="Describe tu token y su propósito..."
-                          className="mt-1"
+                          className="mt-2 bg-gray-700/50 border-gray-600/50 focus:border-primary/50"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="website">Website</Label>
+                        <Label htmlFor="website" className="text-sm font-medium text-gray-300">Website</Label>
                         <Input 
                           id="website"
                           placeholder="https://tu-website.com"
-                          className="mt-1"
+                          className="mt-2 bg-gray-700/50 border-gray-600/50 focus:border-primary/50"
                         />
                       </div>
                     </div>
-                    <Button className="gap-2">
+                    <Button className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg hover:shadow-xl transition-all duration-300">
                       <CheckCircle className="h-4 w-4" />
                       Guardar Configuración
                     </Button>
