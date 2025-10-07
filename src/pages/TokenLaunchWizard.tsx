@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react"
-import { ArrowLeft, ArrowRight, Rocket, Bot, Target, CheckCircle, AlertTriangle, Share2, Wallet, Copy, ExternalLink, Plus } from "lucide-react"
+import { ArrowLeft, ArrowRight, Rocket, Target, CheckCircle, AlertTriangle, Share2, Wallet, Copy, ExternalLink, Plus, Sparkles, Zap } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -17,66 +15,39 @@ import { useCoreWeaveTokenFactory } from "@/hooks/use-core-weave-token-factory"
 import { switchChain } from '@wagmi/core'
 import { config } from '@/lib/wagmi'
 import { parseEther } from 'viem'
-import SocialMediaIntegration from "@/components/social-media-integration"
-import { TokenLaunchConfirmation } from "@/components/token-launch-confirmation"
 import { WalletConnect } from "@/components/wallet-connect"
 import { ContractDiagnostics } from "@/components/contract-diagnostics"
 
 const steps = [
   { id: 1, title: "Configuración del Token", icon: Rocket },
-  { id: 2, title: "Agentes AI", icon: Bot },
-  { id: 3, title: "Confirmación", icon: CheckCircle },
+  { id: 2, title: "Confirmación", icon: CheckCircle },
 ]
 
-const aiAgentTemplates = [
+// Plantillas de tokens populares para facilitar la creación
+const tokenTemplates = [
   {
-    id: "community",
-    name: "Community Manager",
-    description: "Community management and automatic engagement",
-    channels: ["Discord", "Telegram"],
-    features: ["Automatic responses", "Moderation", "Events"]
-  },
-  {
-    id: "marketing",
-    name: "Marketing AI",
-    description: "Automated campaigns and promotion",
-    channels: ["Twitter", "Reddit"],
-    features: ["Scheduled posts", "Influencer outreach", "Trends"]
-  },
-  {
-    id: "analytics",
-    name: "Data Analyst",
-    description: "Market analysis and metrics",
-    channels: ["Dashboard"],
-    features: ["Automatic reports", "Alerts", "Predictions"]
-  },
-  {
-    id: "trader",
-    name: "Trading Assistant",
-    description: "Trading and liquidity support",
-    channels: ["DEX"],
-    features: ["Market making", "Arbitrage", "Price alerts"]
-  }
-]
-
-const marketingStrategies = [
-  {
-    id: "viral",
-    name: "Viral Strategy",
-    description: "Focus on viral content and trends",
-    tactics: ["Memes", "Challenges", "Influencers"]
+    id: "meme",
+    name: "Meme Token",
+    description: "Token viral con enfoque en comunidad",
+    symbol: "MEME",
+    supply: "1000000000",
+    features: ["Comunidad activa", "Marketing viral", "Fácil trading"]
   },
   {
     id: "utility",
-    name: "Utility Focus",
-    description: "Highlight use cases and functionality",
-    tactics: ["Demos", "Tutorials", "Partnerships"]
+    name: "Utility Token",
+    description: "Token con casos de uso específicos",
+    symbol: "UTIL",
+    supply: "10000000",
+    features: ["Casos de uso reales", "Utilidad práctica", "Adopción empresarial"]
   },
   {
-    id: "community",
-    name: "Community First",
-    description: "Building a solid community",
-    tactics: ["AMAs", "Contests", "Rewards"]
+    id: "defi",
+    name: "DeFi Token",
+    description: "Token para protocolos DeFi",
+    symbol: "DEFI",
+    supply: "100000000",
+    features: ["Yield farming", "Staking", "Governance"]
   }
 ]
 
@@ -93,15 +64,12 @@ export default function TokenLaunchWizard() {
     tokenSymbol: string
   } | null>(null)
   const [formData, setFormData] = useState({
-    // Paso 1: Configuración del Token
+    // Configuración del Token
     name: "",
     symbol: "",
     description: "",
     totalSupply: "1000000",
-    
-    // Paso 2: Agentes AI
-    selectedAgents: [] as string[],
-    enableAIAgents: false,
+    selectedTemplate: "",
   })
 
   const handleNext = () => {
@@ -116,43 +84,50 @@ export default function TokenLaunchWizard() {
     }
   }
 
-  const handleAgentToggle = (agentId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedAgents: prev.selectedAgents.includes(agentId)
-        ? prev.selectedAgents.filter(id => id !== agentId)
-        : [...prev.selectedAgents, agentId]
-    }))
-  }
-
-  const handleAIToggle = () => {
-    setFormData(prev => ({
-      ...prev,
-      enableAIAgents: !prev.enableAIAgents,
-      selectedAgents: !prev.enableAIAgents ? [] : prev.selectedAgents
-    }))
+  const handleTemplateSelect = (templateId: string) => {
+    const template = tokenTemplates.find(t => t.id === templateId)
+    if (template) {
+      setFormData(prev => ({
+        ...prev,
+        selectedTemplate: templateId,
+        name: template.name,
+        symbol: template.symbol,
+        totalSupply: template.supply,
+        description: template.description
+      }))
+    }
   }
 
   // Detectar cuando la transacción es exitosa
   useEffect(() => {
-    console.log('Verificando éxito de transacción:', { 
-      isSuccess, 
-      hash, 
-      isCreating, 
-      isLoading 
+    console.log('🔍 Verificando condiciones para mostrar confirmación:', {
+      isSuccess,
+      hash,
+      isCreating,
+      showConfirmation,
+      launchData
     })
     
     if (isSuccess && hash && isCreating) {
       console.log('✅ Transacción exitosa detectada:', { hash, isSuccess })
-      setLaunchData({
+      
+      // Crear datos de lanzamiento con la información actual
+      const launchInfo = {
         transactionHash: hash,
         tokenName: formData.name,
         tokenSymbol: formData.symbol
-      })
+      }
+      
+      console.log('📋 Datos de lanzamiento:', launchInfo)
+      console.log('🎯 Estableciendo showConfirmation = true')
+      
+      setLaunchData(launchInfo)
       setShowConfirmation(true)
       setIsCreating(false)
+      
+      console.log('✨ Estados actualizados - debería mostrar pantalla de confirmación')
     }
-  }, [isSuccess, hash, isCreating, isLoading, formData.name, formData.symbol])
+  }, [isSuccess, hash, isCreating, formData.name, formData.symbol])
 
   // Manejar errores y timeout
   useEffect(() => {
@@ -234,8 +209,7 @@ export default function TokenLaunchWizard() {
     console.log('🚀 Iniciando lanzamiento de token:', {
       name: formData.name,
       symbol: formData.symbol,
-      totalSupply: formData.totalSupply,
-      enableAIAgents: formData.selectedAgents.length > 0 || formData.enableAIAgents
+      totalSupply: formData.totalSupply
     })
 
     setIsCreating(true)
@@ -244,14 +218,12 @@ export default function TokenLaunchWizard() {
     reset()
     
     try {
-      // Determinar si se habilitan agentes AI
-      const enableAIAgents = formData.selectedAgents.length > 0 || formData.enableAIAgents
-
+      // Crear token sin agentes AI para simplificar
       await createToken({
         name: formData.name,
         symbol: formData.symbol,
         totalSupply: formData.totalSupply,
-        enableAIAgents
+        enableAIAgents: false // Simplificado: sin agentes AI
       })
       
       console.log('✅ Función createToken ejecutada exitosamente')
@@ -276,15 +248,17 @@ export default function TokenLaunchWizard() {
       symbol: "",
       description: "",
       totalSupply: "1000000",
-      selectedAgents: [],
-      enableAIAgents: false
+      selectedTemplate: ""
     })
   }
 
   const progress = (currentStep / steps.length) * 100
 
   // Mostrar pantalla de confirmación si el token fue creado exitosamente
+  console.log('🎭 Evaluando renderizado:', { showConfirmation, launchData: !!launchData })
+  
   if (showConfirmation && launchData) {
+    console.log('🎉 Renderizando pantalla de confirmación')
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-950 dark:to-emerald-950 flex items-center justify-center p-4">
         <Card className="w-full max-w-2xl">
@@ -406,41 +380,50 @@ export default function TokenLaunchWizard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link to="/">
-          <Button variant="outline" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <img 
-              src="/CorewL.png" 
-              alt="CoreWeave Logo" 
-              className="h-10 w-10 object-contain"
-            />
-            <h1 className="text-3xl font-bold text-foreground">Launch New Token</h1>
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 rounded-2xl"></div>
+        <div className="relative p-6">
+          <div className="flex items-center gap-4">
+            <Link to="/">
+              <Button variant="outline" size="icon" className="bg-white/80 backdrop-blur-sm">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <img 
+                  src="/CorewL.png" 
+                  alt="CoreWeave Logo" 
+                  className="h-12 w-12 object-contain"
+                />
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                    Launch New Token
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Crea tu token en CoreDAO de forma rápida y sencilla
+                  </p>
+                </div>
+              </div>
+            </div>
+            {isConnected && !isCoreDaoChain && (
+              <Button 
+                variant="destructive" 
+                onClick={async () => {
+                  try {
+                    await switchChain(config, { chainId: 1116 })
+                  } catch (error) {
+                    console.error('Error switching to CoreDAO:', error)
+                  }
+                }}
+                className="flex items-center gap-2 bg-white/80 backdrop-blur-sm"
+              >
+                <AlertTriangle className="h-4 w-4" />
+                Switch to Core Network
+              </Button>
+            )}
           </div>
-          <p className="text-muted-foreground">
-            Configure your token with intelligent AI agents
-          </p>
         </div>
-        {isConnected && !isCoreDaoChain && (
-          <Button 
-            variant="destructive" 
-            onClick={async () => {
-              try {
-                await switchChain(config, { chainId: 1116 })
-              } catch (error) {
-                console.error('Error switching to CoreDAO:', error)
-              }
-            }}
-            className="flex items-center gap-2"
-          >
-            <AlertTriangle className="h-4 w-4" />
-            Switch to Core Network
-          </Button>
-        )}
       </div>
 
       {/* Wallet Connection Alert */}
@@ -499,223 +482,219 @@ export default function TokenLaunchWizard() {
 
       {/* Step Content */}
       {currentStep === 1 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Rocket className="h-5 w-5" />
-              Token Configuration
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Token Name</Label>
-                <Input
-                  id="name"
-                  placeholder="e.g. MemeAI Coin"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="symbol">Symbol</Label>
-                <Input
-                  id="symbol"
-                  placeholder="e.g. MEMEAI"
-                  value={formData.symbol}
-                  onChange={(e) => setFormData(prev => ({ ...prev, symbol: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe your token and its purpose..."
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="supply">Total Supply</Label>
-              <Input
-                id="supply"
-                placeholder="1000000"
-                value={formData.totalSupply}
-                onChange={(e) => setFormData(prev => ({ ...prev, totalSupply: e.target.value }))}
-              />
+        <div className="space-y-6">
+          {/* Plantillas de Tokens */}
+          <Card className="border-2 border-dashed border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Sparkles className="h-5 w-5" />
+                Plantillas Rápidas
+              </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Cantidad total de tokens que se crearán
+                Selecciona una plantilla para empezar rápidamente o configura tu token personalizado
               </p>
-            </div>
-            
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <h3 className="font-semibold mb-2">Información importante:</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• El token será creado en la red CoreDAO</li>
-                <li>• Se requiere pagar una tarifa de creación</li>
-                <li>• Los agentes AI son opcionales y se configuran en el siguiente paso</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {currentStep === 2 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bot className="h-5 w-5" />
-              Agentes AI (Opcional)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-              <div>
-                <h3 className="font-semibold">Habilitar Agentes AI</h3>
-                <p className="text-sm text-muted-foreground">
-                  Los agentes AI pueden ayudar a gestionar tu token automáticamente
-                </p>
-              </div>
-              <Switch
-                checked={formData.enableAIAgents}
-                onCheckedChange={handleAIToggle}
-              />
-            </div>
-            
-            {formData.enableAIAgents && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {aiAgentTemplates.map((agent) => (
-                <div
-                  key={agent.id}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                    formData.selectedAgents.includes(agent.id)
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border hover:border-border/80'
-                  }`}
-                  onClick={() => handleAgentToggle(agent.id)}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-semibold">{agent.name}</h3>
-                      <p className="text-sm text-muted-foreground">{agent.description}</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {tokenTemplates.map((template) => (
+                  <div
+                    key={template.id}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
+                      formData.selectedTemplate === template.id
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                    onClick={() => handleTemplateSelect(template.id)}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`p-2 rounded-lg ${
+                        formData.selectedTemplate === template.id 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'bg-muted'
+                      }`}>
+                        <Zap className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{template.name}</h3>
+                        <p className="text-sm text-muted-foreground">{template.symbol}</p>
+                      </div>
                     </div>
-                    <div className={`w-5 h-5 rounded-full border-2 ${
-                      formData.selectedAgents.includes(agent.id)
-                        ? 'bg-primary border-primary'
-                        : 'border-border'
-                    }`}>
-                      {formData.selectedAgents.includes(agent.id) && (
-                        <CheckCircle className="w-5 h-5 text-primary-foreground" />
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
                     <div className="flex flex-wrap gap-1">
-                      {agent.channels.map(channel => (
-                        <Badge key={channel} variant="outline" className="text-xs">
-                          {channel}
+                      {template.features.map((feature) => (
+                        <Badge key={feature} variant="outline" className="text-xs">
+                          {feature}
                         </Badge>
                       ))}
                     </div>
-                    
-                    <div className="text-xs text-muted-foreground">
-                      {agent.features.join(" • ")}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Configuración Personalizada */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Rocket className="h-5 w-5" />
+                Configuración del Token
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nombre del Token</Label>
+                  <Input
+                    id="name"
+                    placeholder="e.g. Mi Token Genial"
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    className="text-lg"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="symbol">Símbolo</Label>
+                  <Input
+                    id="symbol"
+                    placeholder="e.g. MTG"
+                    value={formData.symbol}
+                    onChange={(e) => setFormData(prev => ({ ...prev, symbol: e.target.value.toUpperCase() }))}
+                    className="text-lg font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Describe tu token y su propósito..."
+                  value={formData.description}
+                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                  className="min-h-[100px]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="supply">Suministro Total</Label>
+                <Input
+                  id="supply"
+                  placeholder="1000000"
+                  value={formData.totalSupply}
+                  onChange={(e) => setFormData(prev => ({ ...prev, totalSupply: e.target.value }))}
+                  className="text-lg"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Cantidad total de tokens que se crearán (sin decimales)
+                </p>
+              </div>
+              
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h3 className="font-semibold mb-2 flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-blue-600" />
+                  Información Importante
+                </h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• El token será creado en la red CoreDAO</li>
+                  <li>• Se requiere pagar una tarifa de creación de {creationFee ? `${Number(creationFee) / 1e18} CORE` : 'CORE'}</li>
+                  <li>• Una vez creado, no se puede modificar el nombre o símbolo</li>
+                  <li>• Los agentes AI se pueden configurar después del lanzamiento</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {currentStep === 2 && (
+        <div className="space-y-6">
+          {/* Resumen del Token */}
+          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Rocket className="h-5 w-5" />
+                Resumen del Token
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Nombre:</span>
+                      <span className="font-semibold text-lg">{formData.name || "No especificado"}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Símbolo:</span>
+                      <span className="font-mono font-semibold text-lg">${formData.symbol || "No especificado"}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Suministro Total:</span>
+                      <span className="font-semibold">{Number(formData.totalSupply || 0).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {currentStep === 3 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5" />
-              Confirmación de Lanzamiento
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold">Configuración del Token</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Nombre:</span>
-                    <span>{formData.name || "No especificado"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Símbolo:</span>
-                    <span>{formData.symbol || "No especificado"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Suministro Total:</span>
-                    <span>{formData.totalSupply || "No especificado"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Descripción:</span>
-                    <span className="text-right max-w-[200px] truncate">{formData.description || "No especificado"}</span>
+                
+                <div className="space-y-3">
+                  <div>
+                    <span className="text-muted-foreground text-sm">Descripción:</span>
+                    <p className="text-sm mt-1 p-3 bg-muted/50 rounded-lg">
+                      {formData.description || "Sin descripción"}
+                    </p>
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="space-y-4">
-                <h3 className="font-semibold">Agentes AI Seleccionados</h3>
+          {/* Información de Costos */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5" />
+                Confirmación de Lanzamiento
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+
+              <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                <h3 className="font-semibold mb-3 flex items-center gap-2 text-green-800 dark:text-green-200">
+                  <CheckCircle className="h-4 w-4" />
+                  Resumen de Costos
+                </h3>
                 <div className="space-y-2">
-                  {formData.enableAIAgents && formData.selectedAgents.length > 0 ? (
-                    formData.selectedAgents.map(agentId => {
-                      const agent = aiAgentTemplates.find(a => a.id === agentId)
-                      return (
-                        <div key={agentId} className="text-sm p-2 bg-muted/50 rounded">
-                          <span className="font-medium">{agent?.name}</span>
-                        </div>
-                      )
-                    })
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      {formData.enableAIAgents ? "Ningún agente seleccionado" : "Agentes AI deshabilitados"}
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Tarifa de creación:</span>
+                    <span className="font-semibold text-lg">
+                      {creationFee ? `${Number(creationFee) / 1e18} CORE` : 'Cargando...'}
                     </span>
-                  )}
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-green-200 dark:border-green-800">
+                    <span className="font-semibold">Total a pagar:</span>
+                    <span className="font-bold text-lg text-green-600 dark:text-green-400">
+                      {creationFee ? `${Number(creationFee) / 1e18} CORE` : 'Cargando...'}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <Separator />
-
-            <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
-              <h3 className="font-semibold mb-2">Resumen de Costos</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                  <span>Lanzamiento del token:</span>
-                  <span>{creationFee ? `${Number(creationFee) / 1e18} CORE` : 'Cargando...'}</span>
-                </div>
-                <Separator className="my-2" />
-                <div className="flex justify-between font-semibold">
-                  <span>Total estimado:</span>
-                  <span>{creationFee ? `${Number(creationFee) / 1e18} CORE` : 'Cargando...'}</span>
-                </div>
+              <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                <h3 className="font-semibold mb-2 flex items-center gap-2 text-amber-800 dark:text-amber-200">
+                  <AlertTriangle className="h-4 w-4" />
+                  Información Importante
+                </h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• El token será creado en la red CoreDAO</li>
+                  <li>• La transacción es irreversible una vez confirmada</li>
+                  <li>• Asegúrate de tener suficiente CORE para la tarifa de creación</li>
+                  <li>• Los agentes AI se pueden configurar después del lanzamiento</li>
+                </ul>
               </div>
-            </div>
-
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <h3 className="font-semibold mb-2">⚠️ Información importante:</h3>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• El token será creado en la red CoreDAO</li>
-                <li>• La transacción es irreversible una vez confirmada</li>
-                <li>• Asegúrate de tener suficiente CORE para la tarifa de creación</li>
-                <li>• Los agentes AI se pueden configurar después del lanzamiento</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Navigation */}
@@ -730,7 +709,7 @@ export default function TokenLaunchWizard() {
           Anterior
         </Button>
 
-        {currentStep === steps.length ? (
+        {currentStep === 2 ? (
           <div className="flex flex-col gap-2">
             {!isCreating ? (
               <Button 

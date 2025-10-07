@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Rocket, TrendingUp, Users, Bot, Plus, Filter, Search, Settings, Factory, User } from "lucide-react"
+import { Rocket, TrendingUp, Users, Bot, Plus, Filter, Search, Settings, Factory, User, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -373,72 +373,89 @@ export default function TokenDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <img 
-              src="/CorewL.png" 
-              alt="CoreWeave Logo" 
-              className="h-10 w-10 object-contain"
-            />
-            <h1 className="text-3xl font-bold text-foreground">Token Launchpad</h1>
+      <div className="relative overflow-hidden mb-8">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-blue-500/10 to-purple-500/10 rounded-2xl"></div>
+        <div className="relative p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <img 
+                  src="/CorewL.png" 
+                  alt="CoreWeave Logo" 
+                  className="h-12 w-12 object-contain"
+                />
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                    Token Launchpad
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Lanza y gestiona tokens con agentes AI inteligentes
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <Link to="/launch">
+              <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg">
+                <Plus className="h-5 w-5" />
+                Launch New Token
+              </Button>
+            </Link>
           </div>
-          <p className="text-muted-foreground">
-            Launch and manage tokens with intelligent AI agents
-          </p>
         </div>
-        
-        <Link to="/launch">
-          <Button size="lg" className="gap-2">
-            <Plus className="h-5 w-5" />
-            Launch New Token
-          </Button>
-        </Link>
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Live Tokens</CardTitle>
-            <TrendingUp className="h-4 w-4 text-success" />
+            <CardTitle className="text-sm font-medium text-green-800 dark:text-green-200">Live Tokens</CardTitle>
+            <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">{liveTokens}</div>
-            <p className="text-xs text-muted-foreground">active now</p>
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400">{liveTokens}</div>
+            <p className="text-xs text-green-700 dark:text-green-300">activos ahora</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Launches</CardTitle>
-            <Rocket className="h-4 w-4 text-primary" />
+            <CardTitle className="text-sm font-medium text-blue-800 dark:text-blue-200">Lanzamientos</CardTitle>
+            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+              <Rocket className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{launchingTokens}</div>
-            <p className="text-xs text-muted-foreground">in progress</p>
+            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{launchingTokens}</div>
+            <p className="text-xs text-blue-700 dark:text-blue-300">en progreso</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Market Cap</CardTitle>
-            <TrendingUp className="h-4 w-4 text-warning" />
+            <CardTitle className="text-sm font-medium text-purple-800 dark:text-purple-200">Market Cap Total</CardTitle>
+            <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalMarketCap.toFixed(1)}M</div>
-            <p className="text-xs text-muted-foreground">total value</p>
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">${totalMarketCap.toFixed(1)}M</div>
+            <p className="text-xs text-purple-700 dark:text-purple-300">valor total</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Holders</CardTitle>
-            <Users className="h-4 w-4 text-accent-foreground" />
+            <CardTitle className="text-sm font-medium text-orange-800 dark:text-orange-200">Total Holders</CardTitle>
+            <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+              <Users className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalHolders.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">unique investors</p>
+            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">{totalHolders.toLocaleString()}</div>
+            <p className="text-xs text-orange-700 dark:text-orange-300">inversores únicos</p>
           </CardContent>
         </Card>
       </div>
@@ -574,32 +591,55 @@ export default function TokenDashboard() {
       )}
 
       {/* Quick Launch Card */}
-      <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+      <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 hover:shadow-xl transition-all duration-300">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" />
-            Quick AI Launch
+          <CardTitle className="flex items-center gap-2 text-primary">
+            <Sparkles className="h-6 w-6" />
+            Lanzamiento Rápido
           </CardTitle>
+          <p className="text-muted-foreground">
+            Crea tu token en minutos con plantillas preconfiguradas y agentes AI inteligentes
+          </p>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground mb-4">
-            Create your token in minutes with pre-configured AI agents for marketing, community, and automatic engagement.
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Rocket className="h-4 w-4 text-primary" />
+                <span className="font-semibold">Wizard</span>
+              </div>
+              <p className="text-sm text-muted-foreground">Guía paso a paso</p>
+            </div>
+            <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Factory className="h-4 w-4 text-primary" />
+                <span className="font-semibold">Factory</span>
+              </div>
+              <p className="text-sm text-muted-foreground">Creación directa</p>
+            </div>
+            <div className="p-4 bg-white/50 dark:bg-gray-800/50 rounded-lg border border-primary/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Bot className="h-4 w-4 text-primary" />
+                <span className="font-semibold">AI Agents</span>
+              </div>
+              <p className="text-sm text-muted-foreground">Automatización</p>
+            </div>
+          </div>
           <div className="flex flex-wrap gap-3">
             <Link to="/launch">
-              <Button className="gap-2">
+              <Button className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg">
                 <Rocket className="h-4 w-4" />
                 Launch Wizard
               </Button>
             </Link>
             <Link to="/factory">
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 border-primary/30 hover:bg-primary/10">
                 <Factory className="h-4 w-4" />
                 Token Factory
               </Button>
             </Link>
             <Link to="/strategies">
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 border-primary/30 hover:bg-primary/10">
                 <Bot className="h-4 w-4" />
                 Ver Estrategias AI
               </Button>

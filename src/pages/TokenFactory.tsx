@@ -74,26 +74,33 @@ export default function TokenFactory() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Token Factory</h1>
-          <p className="text-muted-foreground mt-1">
-            Create and manage AI-powered tokens on CoreDAO
-          </p>
+      <div className="relative overflow-hidden mb-8">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-blue-500/10 to-purple-500/10 rounded-2xl"></div>
+        <div className="relative p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                Token Factory
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Crea y gestiona tokens con IA en CoreDAO
+              </p>
+            </div>
+            {isConnected ? (
+              <Link to="/launch">
+                <Button className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg">
+                  <Plus className="h-4 w-4" />
+                  Create New Token
+                </Button>
+              </Link>
+            ) : (
+              <Button disabled className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create New Token
+              </Button>
+            )}
+          </div>
         </div>
-        {isConnected ? (
-          <Link to="/launch">
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create New Token
-            </Button>
-          </Link>
-        ) : (
-          <Button disabled className="gap-2">
-            <Plus className="h-4 w-4" />
-            Create New Token
-          </Button>
-        )}
       </div>
 
       {/* Wallet Connection Alert */}
@@ -110,44 +117,44 @@ export default function TokenFactory() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Rocket className="h-5 w-5 text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/10 to-blue-50 dark:from-primary/20 dark:to-blue-950/20 hover:shadow-lg transition-all">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-primary/20 rounded-xl">
+                <Rocket className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Tokens</p>
-                <p className="text-2xl font-bold">{allTokens.length}</p>
+                <p className="text-3xl font-bold text-primary">{allTokens.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/10 rounded-lg">
-                <Users className="h-5 w-5 text-green-500" />
+        <Card className="border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 hover:shadow-lg transition-all">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-100 dark:bg-green-900 rounded-xl">
+                <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">My Tokens</p>
-                <p className="text-2xl font-bold">{userTokens.length}</p>
+                <p className="text-sm text-muted-foreground">Mis Tokens</p>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400">{userTokens.length}</p>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/10 rounded-lg">
-                <Bot className="h-5 w-5 text-blue-500" />
+        <Card className="border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 hover:shadow-lg transition-all">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-xl">
+                <Bot className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">AI-Enabled</p>
-                <p className="text-2xl font-bold">
+                <p className="text-sm text-muted-foreground">Con IA</p>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                   {allTokens.filter(token => 
                     token.aiAgentsConfig ? Object.values(token.aiAgentsConfig).some(enabled => enabled) : false
                   ).length}
@@ -157,15 +164,15 @@ export default function TokenFactory() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-500/10 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-orange-500" />
+        <Card className="border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20 hover:shadow-lg transition-all">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-xl">
+                <TrendingUp className="h-6 w-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Creation Fee</p>
-                <p className="text-2xl font-bold">
+                <p className="text-sm text-muted-foreground">Tarifa Creación</p>
+                <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                   {creationFee ? `${Number(creationFee) / 1e18}` : '0'} CORE
                 </p>
               </div>
