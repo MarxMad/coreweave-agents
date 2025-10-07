@@ -306,7 +306,6 @@ export default function TokenFactory() {
           })}
         </div>
       )}
-      </div>
     </div>
   )
 }
