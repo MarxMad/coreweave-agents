@@ -71,48 +71,51 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
   const StatusIcon = config.icon
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 border-border/50 overflow-hidden">
-      <CardHeader className="pb-3">
+    <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm hover:from-primary/10 hover:to-purple-500/10 overflow-hidden relative">
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      <CardHeader className="pb-3 relative z-10">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${config.bgColor} flex-shrink-0`}>
+            <div className={`p-3 rounded-2xl ${config.bgColor} flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
               {token.image ? (
-                <img src={token.image} alt={token.name} className="h-8 w-8 rounded-full" />
+                <img src={token.image} alt={token.name} className="h-10 w-10 rounded-full" />
               ) : (
-                <Rocket className={`h-5 w-5 ${config.textColor}`} />
+                <Rocket className={`h-6 w-6 ${config.textColor}`} />
               )}
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-foreground truncate">{token.name}</h3>
-                <Badge variant="outline" className="text-xs">${token.symbol}</Badge>
+                <h3 className="font-bold text-foreground truncate text-lg group-hover:text-primary transition-colors">{token.name}</h3>
+                <Badge variant="outline" className="text-xs bg-primary/10 border-primary/30 text-primary font-mono">${token.symbol}</Badge>
               </div>
-              <p className="text-sm text-muted-foreground truncate">{token.description}</p>
+              <p className="text-sm text-muted-foreground truncate mt-1">{token.description}</p>
             </div>
           </div>
           
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Badge variant={config.variant} className="gap-1">
+            <Badge variant={config.variant} className="gap-1 shadow-lg">
               <StatusIcon className="h-3 w-3" />
               {config.label}
             </Badge>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/20 transition-colors">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onView(token.id)}>
+              <DropdownMenuContent align="end" className="bg-gray-900/95 backdrop-blur-sm border-gray-700">
+                <DropdownMenuItem onClick={() => onView(token.id)} className="hover:bg-primary/20">
                   <Eye className="h-4 w-4 mr-2" />
                   Ver Detalles
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onManage(token.id)}>
+                <DropdownMenuItem onClick={() => onManage(token.id)} className="hover:bg-primary/20">
                   <Bot className="h-4 w-4 mr-2" />
                   Gestionar AI
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onToggleStatus(token.id)}>
+                <DropdownMenuItem onClick={() => onToggleStatus(token.id)} className="hover:bg-primary/20">
                   {token.status === "paused" ? (
                     <>
                       <Play className="h-4 w-4 mr-2" />
@@ -131,55 +134,59 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
         </div>
       </CardHeader>
       
-      <CardContent className="pt-0 space-y-4">
+      <CardContent className="pt-0 space-y-4 relative z-10">
         {/* Progress Bar for Launching Status */}
         {token.status === "launching" && (
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Progreso del Lanzamiento</span>
-              <span className="font-medium">{token.progress}%</span>
+              <span className="font-medium text-primary">{token.progress}%</span>
             </div>
-            <Progress value={token.progress} className="h-2" />
+            <Progress value={token.progress} className="h-2 bg-gray-700" />
           </div>
         )}
         
-        {/* Metrics Grid */}
+        {/* Metrics Grid - Estilo pump.fun */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">Market Cap</p>
-            <p className="text-sm font-semibold">{token.marketCap}</p>
+          <div className="space-y-1 p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
+            <p className="text-xs text-muted-foreground font-medium">Market Cap</p>
+            <p className="text-lg font-bold text-green-400">{token.marketCap}</p>
           </div>
-          <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">Holders</p>
-            <p className="text-sm font-semibold">{token.holders.toLocaleString()}</p>
+          <div className="space-y-1 p-3 bg-gray-800/50 rounded-xl border border-gray-700/50">
+            <p className="text-xs text-muted-foreground font-medium">Holders</p>
+            <p className="text-lg font-bold text-blue-400">{token.holders.toLocaleString()}</p>
           </div>
         </div>
         
-        {/* AI & Social Metrics */}
+        {/* AI & Social Metrics - Estilo pump.fun */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <Bot className="h-4 w-4 text-primary" />
+          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl border border-primary/20">
+            <div className="p-2 bg-primary/20 rounded-lg">
+              <Bot className="h-4 w-4 text-primary" />
+            </div>
             <div>
-              <p className="text-xs text-muted-foreground">Agentes AI</p>
-              <p className="text-sm font-semibold">{token.aiAgents} activos</p>
+              <p className="text-xs text-muted-foreground font-medium">Agentes AI</p>
+              <p className="text-sm font-bold text-primary">{token.aiAgents} activos</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-success" />
+          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <Users className="h-4 w-4 text-green-400" />
+            </div>
             <div>
-              <p className="text-xs text-muted-foreground">Social Score</p>
-              <p className="text-sm font-semibold">{token.socialScore}/100</p>
+              <p className="text-xs text-muted-foreground font-medium">Social Score</p>
+              <p className="text-sm font-bold text-green-400">{token.socialScore}/100</p>
             </div>
           </div>
         </div>
         
-        {/* Action Buttons */}
+        {/* Action Buttons - Estilo pump.fun */}
         <div className="flex gap-2 pt-2">
           <Button 
             onClick={() => onView(token.id)}
             size="sm" 
             variant="outline"
-            className="flex-1"
+            className="flex-1 bg-gray-800/50 border-gray-600 hover:bg-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all duration-300"
           >
             <Eye className="h-4 w-4 mr-2" />
             Ver
@@ -188,17 +195,17 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
           <Button 
             onClick={() => onManage(token.id)}
             size="sm" 
-            className="flex-1"
+            className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <Bot className="h-4 w-4 mr-2" />
             Gestionar
           </Button>
         </div>
         
-        {/* Footer Info */}
-        <div className="flex justify-between items-center text-xs text-muted-foreground pt-2 border-t border-border/50">
-          <span>Creado por {token.creator}</span>
-          <span>{token.launchDate}</span>
+        {/* Footer Info - Estilo pump.fun */}
+        <div className="flex justify-between items-center text-xs text-muted-foreground pt-3 border-t border-gray-700/50 bg-gray-800/30 -mx-6 px-6 py-3 rounded-b-lg">
+          <span className="font-mono text-gray-400">Creado por {token.creator}</span>
+          <span className="text-primary font-medium">{token.launchDate}</span>
         </div>
       </CardContent>
     </Card>

@@ -371,7 +371,8 @@ export default function TokenDashboard() {
   const totalHolders = allTokens.reduce((sum, t) => sum + t.holders, 0)
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="space-y-6 p-6">
       {/* Header */}
       <div className="relative overflow-hidden mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-blue-500/10 to-purple-500/10 rounded-2xl"></div>
@@ -887,6 +888,7 @@ export default function TokenDashboard() {
           )}
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   )
 }

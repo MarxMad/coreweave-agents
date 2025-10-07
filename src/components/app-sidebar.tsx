@@ -44,12 +44,12 @@ export function AppSidebar() {
 
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "bg-primary/10 text-primary font-medium border-r-2 border-primary" 
-      : "hover:bg-accent/50 text-muted-foreground hover:text-foreground"
+      ? "bg-gradient-to-r from-primary/20 to-purple-500/20 text-primary font-medium border-r-2 border-primary shadow-lg" 
+      : "hover:bg-gray-800/50 text-muted-foreground hover:text-foreground hover:shadow-md transition-all duration-300"
 
   return (
     <Sidebar
-      className={collapsed ? "w-14" : "w-64"}
+      className={`${collapsed ? "w-14" : "w-64"} bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700/50`}
       collapsible="icon"
     >
       <SidebarContent className="pt-4">
@@ -99,9 +99,9 @@ export function AppSidebar() {
         {!collapsed && (
           <div className="mt-auto p-4">
             <NavLink to="/launch">
-              <div className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-primary-foreground transition-colors hover:bg-primary-hover">
-                <Rocket className="h-4 w-4" />
-                <span className="text-sm font-medium">Launch Token</span>
+              <div className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-purple-600 px-4 py-3 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <Rocket className="h-5 w-5" />
+                <span className="text-sm font-bold">Launch Token</span>
               </div>
             </NavLink>
           </div>

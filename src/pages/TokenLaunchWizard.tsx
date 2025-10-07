@@ -378,7 +378,8 @@ export default function TokenLaunchWizard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="space-y-6 p-6">
       {/* Header */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 rounded-2xl"></div>
@@ -884,6 +885,7 @@ export default function TokenLaunchWizard() {
             <ArrowRight className="h-4 w-4" />
           </Button>
         )}
+      </div>
       </div>
     </div>
   )
