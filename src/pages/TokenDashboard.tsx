@@ -886,7 +886,6 @@ export default function TokenDashboard() {
           )}
         </TabsContent>
       </Tabs>
-      </div>
     </div>
   )
 }
