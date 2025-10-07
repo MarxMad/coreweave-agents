@@ -371,12 +371,10 @@ export default function TokenDashboard() {
   const totalHolders = allTokens.reduce((sum, t) => sum + t.holders, 0)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="space-y-6 p-6">
       {/* Header */}
-      <div className="relative overflow-hidden mb-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-blue-500/10 to-purple-500/10 rounded-2xl"></div>
-        <div className="relative p-6">
+      <div className="mb-8 p-6 bg-gray-800/50 rounded-2xl border border-gray-700/50">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
@@ -397,7 +395,7 @@ export default function TokenDashboard() {
             </div>
             
             <Link to="/launch">
-              <Button size="lg" className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg">
+              <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 shadow-lg">
                 <Plus className="h-5 w-5" />
                 Launch New Token
               </Button>
@@ -408,55 +406,55 @@ export default function TokenDashboard() {
 
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 hover:shadow-lg transition-all">
+        <Card className="border border-gray-700/50 bg-gray-800/50 hover:bg-gray-700/50 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-green-800 dark:text-green-200">Live Tokens</CardTitle>
-            <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-              <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <CardTitle className="text-sm font-medium">Live Tokens</CardTitle>
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-green-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400">{liveTokens}</div>
-            <p className="text-xs text-green-700 dark:text-green-300">activos ahora</p>
+            <div className="text-3xl font-bold text-green-400">{liveTokens}</div>
+            <p className="text-xs text-muted-foreground">activos ahora</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 hover:shadow-lg transition-all">
+        <Card className="border border-gray-700/50 bg-gray-800/50 hover:bg-gray-700/50 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-blue-800 dark:text-blue-200">Lanzamientos</CardTitle>
-            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <Rocket className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <CardTitle className="text-sm font-medium">Lanzamientos</CardTitle>
+            <div className="p-2 bg-blue-500/20 rounded-lg">
+              <Rocket className="h-4 w-4 text-blue-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{launchingTokens}</div>
-            <p className="text-xs text-blue-700 dark:text-blue-300">en progreso</p>
+            <div className="text-3xl font-bold text-blue-400">{launchingTokens}</div>
+            <p className="text-xs text-muted-foreground">en progreso</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 hover:shadow-lg transition-all">
+        <Card className="border border-gray-700/50 bg-gray-800/50 hover:bg-gray-700/50 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-purple-800 dark:text-purple-200">Market Cap Total</CardTitle>
-            <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-              <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <CardTitle className="text-sm font-medium">Market Cap Total</CardTitle>
+            <div className="p-2 bg-purple-500/20 rounded-lg">
+              <TrendingUp className="h-4 w-4 text-purple-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">${totalMarketCap.toFixed(1)}M</div>
-            <p className="text-xs text-purple-700 dark:text-purple-300">valor total</p>
+            <div className="text-3xl font-bold text-purple-400">${totalMarketCap.toFixed(1)}M</div>
+            <p className="text-xs text-muted-foreground">valor total</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20 hover:shadow-lg transition-all">
+        <Card className="border border-gray-700/50 bg-gray-800/50 hover:bg-gray-700/50 hover:shadow-lg transition-all">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-orange-800 dark:text-orange-200">Total Holders</CardTitle>
-            <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
-              <Users className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+            <CardTitle className="text-sm font-medium">Total Holders</CardTitle>
+            <div className="p-2 bg-orange-500/20 rounded-lg">
+              <Users className="h-4 w-4 text-orange-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">{totalHolders.toLocaleString()}</div>
-            <p className="text-xs text-orange-700 dark:text-orange-300">inversores únicos</p>
+            <div className="text-3xl font-bold text-orange-400">{totalHolders.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">inversores únicos</p>
           </CardContent>
         </Card>
       </div>
@@ -592,7 +590,7 @@ export default function TokenDashboard() {
       )}
 
       {/* Quick Launch Card */}
-      <Card className="border-2 border-primary/30 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 hover:shadow-xl transition-all duration-300">
+      <Card className="border border-gray-700/50 bg-gray-800/50 hover:bg-gray-700/50 hover:shadow-xl transition-all duration-300">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-primary">
             <Sparkles className="h-6 w-6" />
@@ -628,12 +626,12 @@ export default function TokenDashboard() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link to="/launch">
-              <Button className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg">
+              <Button className="gap-2 bg-primary hover:bg-primary/90 shadow-lg">
                 <Rocket className="h-4 w-4" />
                 Launch Wizard
               </Button>
             </Link>
-            <Link to="/factory">
+            <Link to="/token-factory">
               <Button variant="outline" className="gap-2 border-primary/30 hover:bg-primary/10">
                 <Factory className="h-4 w-4" />
                 Token Factory

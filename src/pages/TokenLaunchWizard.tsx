@@ -378,12 +378,10 @@ export default function TokenLaunchWizard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="space-y-6 p-6">
       {/* Header */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 rounded-2xl"></div>
-        <div className="relative p-6">
+      <div className="p-6 bg-gray-800/50 rounded-2xl border border-gray-700/50">
           <div className="flex items-center gap-4">
             <Link to="/">
               <Button variant="outline" size="icon" className="bg-white/80 backdrop-blur-sm">
@@ -398,7 +396,7 @@ export default function TokenLaunchWizard() {
                   className="h-12 w-12 object-contain"
                 />
                 <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                  <h1 className="text-3xl font-bold text-primary">
                     Launch New Token
                   </h1>
                   <p className="text-muted-foreground">

@@ -1,4 +1,5 @@
 import { Rocket, TrendingUp, Users, Bot, MoreVertical, Eye, Play, Pause } from "lucide-react"
+import { Link } from "react-router-dom"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -71,11 +72,9 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
   const StatusIcon = config.icon
 
   return (
-    <Card className="group hover:shadow-2xl transition-all duration-300 border-0 bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm hover:from-primary/10 hover:to-purple-500/10 overflow-hidden relative">
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <Card className="group hover:shadow-lg transition-all duration-300 border border-gray-700/50 bg-gray-800/50 hover:bg-gray-700/50 overflow-hidden">
       
-      <CardHeader className="pb-3 relative z-10">
+      <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className={`p-3 rounded-2xl ${config.bgColor} flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
@@ -134,7 +133,7 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
         </div>
       </CardHeader>
       
-      <CardContent className="pt-0 space-y-4 relative z-10">
+      <CardContent className="pt-0 space-y-4">
         {/* Progress Bar for Launching Status */}
         {token.status === "launching" && (
           <div className="space-y-2">
@@ -158,9 +157,9 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
           </div>
         </div>
         
-        {/* AI & Social Metrics - Estilo pump.fun */}
+        {/* AI & Social Metrics */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-xl border border-primary/20">
+          <div className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-xl border border-gray-600/50">
             <div className="p-2 bg-primary/20 rounded-lg">
               <Bot className="h-4 w-4 text-primary" />
             </div>
@@ -169,7 +168,7 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
               <p className="text-sm font-bold text-primary">{token.aiAgents} activos</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
+          <div className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-xl border border-gray-600/50">
             <div className="p-2 bg-green-500/20 rounded-lg">
               <Users className="h-4 w-4 text-green-400" />
             </div>
@@ -180,26 +179,28 @@ export function TokenCard({ token, onView, onManage, onToggleStatus }: TokenCard
           </div>
         </div>
         
-        {/* Action Buttons - Estilo pump.fun */}
+        {/* Action Buttons */}
         <div className="flex gap-2 pt-2">
-          <Button 
-            onClick={() => onView(token.id)}
-            size="sm" 
-            variant="outline"
-            className="flex-1 bg-gray-800/50 border-gray-600 hover:bg-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all duration-300"
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            Ver
-          </Button>
+          <Link to={`/token/${token.id}`} className="flex-1">
+            <Button 
+              size="sm" 
+              variant="outline"
+              className="w-full bg-gray-800/50 border-gray-600 hover:bg-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all duration-300"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Ver
+            </Button>
+          </Link>
           
-          <Button 
-            onClick={() => onManage(token.id)}
-            size="sm" 
-            className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            <Bot className="h-4 w-4 mr-2" />
-            Gestionar
-          </Button>
+          <Link to={`/token/${token.id}`} className="flex-1">
+            <Button 
+              size="sm" 
+              className="w-full bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Bot className="h-4 w-4 mr-2" />
+              Gestionar
+            </Button>
+          </Link>
         </div>
         
         {/* Footer Info - Estilo pump.fun */}

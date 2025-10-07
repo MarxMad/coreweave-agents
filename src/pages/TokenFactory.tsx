@@ -72,15 +72,13 @@ export default function TokenFactory() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="space-y-6 p-6">
       {/* Header */}
-      <div className="relative overflow-hidden mb-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-blue-500/10 to-purple-500/10 rounded-2xl"></div>
-        <div className="relative p-6">
+      <div className="mb-8 p-6 bg-gray-800/50 rounded-2xl border border-gray-700/50">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold text-primary">
                 Token Factory
               </h1>
               <p className="text-muted-foreground mt-1">
@@ -89,7 +87,7 @@ export default function TokenFactory() {
             </div>
             {isConnected ? (
               <Link to="/launch">
-                <Button className="gap-2 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg">
+                <Button className="gap-2 bg-primary hover:bg-primary/90 shadow-lg">
                   <Plus className="h-4 w-4" />
                   Create New Token
                 </Button>

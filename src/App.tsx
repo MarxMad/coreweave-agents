@@ -9,6 +9,7 @@ import Landing from "./pages/Landing";
 import TokenDashboard from "./pages/TokenDashboard";
 import TokenLaunchWizard from "./pages/TokenLaunchWizard";
 import TokenFactory from './pages/TokenFactory';
+import TokenManagement from './pages/TokenManagement';
 import AIAgentManager from './pages/AIAgentManager';
 import Monitor from "./pages/Monitor";
 import Analytics from "./pages/Analytics";
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Layout><TokenDashboard /></Layout>} />
                 <Route path="/launch" element={<Layout><TokenLaunchWizard /></Layout>} />
                 <Route path="/token-factory" element={<Layout><TokenFactory /></Layout>} />
+                <Route path="/token/:tokenAddress" element={<Layout><TokenManagement /></Layout>} />
                 <Route path="/ai-agent-manager" element={<Layout><AIAgentManager /></Layout>} />
                 <Route path="/monitor" element={<Layout><Monitor /></Layout>} />
                 <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
