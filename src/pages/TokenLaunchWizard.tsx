@@ -884,7 +884,6 @@ export default function TokenLaunchWizard() {
           </Button>
         )}
       </div>
-      </div>
     </div>
   )
 }
